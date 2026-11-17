@@ -61,7 +61,7 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
         <label>재고(합계)<span><input id="stock0" type="number" inputmode="numeric" placeholder="최소"> ~ <input id="stock1" type="number" inputmode="numeric" placeholder="최대"></span></label>
       </div>
     </div>
-    <div class="btns"><button class="go" id="go" disabled>엑셀 만들기 · 다운로드</button><button class="go" id="go2" disabled style="background:var(--ok);flex:0 0 auto">타매장 판매 · 내 재고없음</button><button class="clr" id="clr">초기화</button></div>
+    <div class="btns"><button class="go" id="go" disabled>엑셀 만들기 · 다운로드</button><button class="go" id="go2" disabled style="background:var(--ok);flex:0 0 auto">타매장 판매 · 내 재고없음</button><button class="go" id="go3" disabled style="background:#7030A0;flex:0 0 auto">전체 상품 대조 · 내 매장 미보유</button><button class="clr" id="clr">초기화</button></div>
     <div class="status" id="st"></div>
   </div>
 
@@ -80,6 +80,7 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
         <tr><td><b>판매수량</b> · 중분류·소분류</td><td>스타일별 판매현황상세</td></tr>
         <tr><td><b>년 · 월</b> (최종입고일) · 중분류·소분류</td><td>사이즈별 현재고 조회</td></tr>
         <tr><td><b>정상가 · 판매가 · 감가율</b></td><td>Shoe Card 출력</td></tr>
+        <tr><td><b>전체 상품 대조</b> (내 매장 미보유 상품)</td><td>카테고리별 <b>전체 상품 리스트</b> (브랜드·상품명·스타일·칼라·소비자가·분류)</td></tr>
       </table>
       <p style="color:var(--sub);margin:10px 0 0;line-height:1.6">
         · 결과 1행은 열별 합계, 2행은 제목, 3행부터 데이터입니다(기존 양식과 동일). 필터가 걸려 있어 '점' 열로 매장을 고르면 됩니다.<br>
@@ -87,6 +88,7 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
         · 바코드 출력 파일을 쓸 때: 스타일별입출고실적조회(점) 파일 없이 바코드 파일만 넣으면 됩니다. 두 파일을 동시에 넣으면 스타일별입출고실적조회가 우선입니다.<br>
         · 점재고에 있지만 현재재고 0이고 판매도 없는 행은 뺍니다.<br>
         · 출력 범위: 감가율·판매수량·재고(합계)에 최소~최대를 넣으면 모두 만족하는 행만 엑셀에 담습니다. 판매 없음은 0, 감가율 조건이 있으면 Shoe Card에 없는 행은 빠집니다. 파일 이름에 조건이 붙습니다.<br>
+        · 전체 상품 대조: 상품 리스트 + 점재고(또는 바코드) 파일을 넣고 내 매장을 고른 뒤 보라색 버튼. 현재재고 0이면 미보유로 봅니다. 창고재고·판매현황을 같이 넣으면 등급이 붙습니다 — <b>S</b> 창고 있음+타매장 판매 → 즉시 입고요청 · <b>A</b> 창고 있음 · <b>B</b> 타매장 판매만 → 점간이동 검토 · <b>C</b> 재고 없음. "칼라 결손"은 같은 스타일 다른 컬러만 보유한 경우입니다.<br>
         · 문의: 대경지역 지역장
       </p>
     </details>
@@ -235,7 +237,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       for (const f of found.barcode) {
         const I = f.idx;
         // 매장명: 파일 메타에서 추출한 barcodeStore 사용
-        const storeName = f.barcodeStore || f.name.replace(/\.[^.]+$/, '');
+        const storeName = overrideMyStore || f.barcodeStore || f.name.replace(/\.[^.]+$/, '');
         if (storeName && !myStore) myStore = storeName;
         for (let i = f.h + 1; i < f.rows.length; i++) {
           const r = f.rows[i]; if (!r) continue;
@@ -637,34 +639,31 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   const SLOT_DESC={
     store:'합계·사이즈별 재고, 결과 행의 기준',
     barcode:'점재고 대체 — 인쇄매수=현재재고, 스타일별입출고실적조회(점) 없을 때 사용',
-    wh:'창고 열',sales:'판매수량 열 (+중분류·소분류)',size:'년·월 열 (+중분류·소분류)',card:'정상가·판매가·감가율 열'
+    wh:'창고 열',sales:'판매수량 열 (+중분류·소분류)',size:'년·월 열 (+중분류·소분류)',card:'정상가·판매가·감가율 열',catalog:'전체 상품 대조 기준 (보라색 버튼)'
   };
   const STORE_LIST=['FH 대구동성로중앙점','GS 대구동성로중앙점','KM 대구월배이마트점','KM 대구이시아폴리스점','KM 성서홈플러스점','KM 율하롯데아울렛점','MS 대구중앙로역점','SE 경산스타필드마켓점','SE 대구롯데점','SE 대구이시아폴리스점','SP 대구동성로점','ST 구미롯데마트점','ST 구미원평점','ST 구미인동점','ST 김천롯데마트점','ST 대구성서점','ST 대구신매점','ST 대구월배점','ST 대구칠곡점','ST 대구현대아울렛점','ST 성서홈플러스점','ST 율하롯데아울렛점'];
   let files=[]; // {name, rows, type}
   const $=id=>document.getElementById(id);
   function hasStockFile(){return files.some(f=>f.type==='store'||f.type==='barcode');}
-  function getMyStore(){const el=$('myStoreSel');return el?el.value:'';}
+  let selStore='';
+  function getMyStore(){return needStore()?selStore:'';}
+  const hasT=t=>files.some(f=>f.type===t);
+  function needStore(){return (hasT('barcode')&&!hasT('store'))||hasT('catalog');}
   function draw(){
     const by={store:[],barcode:[],wh:[],sales:[],size:[],card:[],catalog:[]}; const unk=[];
     files.forEach(f=>f.type?by[f.type].push(f.name):unk.push(f.name));
-    $('slots').innerHTML=Object.keys(T).filter(k=>k!=='catalog').map(k=>{
+    $('slots').innerHTML=Object.keys(T).map(k=>{
       const n=by[k].length;
       // barcode 슬롯: store가 있으면 "store로 대체됨" 표시
       if(k==='barcode'&&by.store.length>0) return `<div class="slot"><div class="t">${T[k].label}<span class="bd no">대기</span></div><div class="d" style="color:var(--warn)">스타일별입출고실적조회(점) 파일이 있어 바코드 파일은 무시됩니다</div></div>`;
-      // barcode 슬롯: 파일 있고 store 없으면 매장 선택 드롭다운 표시
-      if(k==='barcode'&&n>0&&by.store.length===0){
-        const opts=STORE_LIST.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
-        const sel=`<select id="myStoreSel" style="margin-top:6px;padding:4px 8px;border-radius:4px;border:1px solid var(--bd);font-size:0.9rem;width:100%;max-width:280px"><option value="">— 내 매장 선택 (필수) —</option>${opts}</select>`;
-        return `<div class="slot"><div class="t">${T[k].label}<span class="bd ok">✓ ${n}개</span></div><div class="d">→ ${SLOT_DESC[k]}</div><div class="f">${by[k].map(esc).join('<br>')}</div><div style="margin-top:6px;font-size:0.85rem;color:var(--warn)">📍 내 매장(타매장 판매 비교 기준)을 선택하세요</div>${sel}</div>`;
-      }
       return `<div class="slot"><div class="t">${T[k].label}<span class="bd ${n?'ok':'no'}">${n?'✓ '+n+'개':'미첨부'}</span></div><div class="d">${n?'→ ':'없으면 비움: '}${SLOT_DESC[k]}</div>${n?`<div class="f">${by[k].map(esc).join('<br>')}</div>`:''}</div>`;
     }).join('')
+      +(needStore()?`<div class="slot" style="border-color:var(--pri)"><div class="t">📍 내 매장 선택<span class="bd ${selStore?'ok':'warn'}">${selStore?'✓ 선택됨':'필수'}</span></div><div class="d">${hasT('catalog')?'미보유 상품 대조 기준 매장':'바코드 파일의 매장 = 타매장 비교 기준'}</div><select id="myStoreSel" style="margin-top:6px;padding:6px 8px;border-radius:6px;border:1px solid var(--line);font:inherit;width:100%"><option value="">— 내 매장 선택 —</option>${STORE_LIST.map(s=>`<option${s===selStore?' selected':''}>${esc(s)}</option>`).join('')}</select></div>`:'')
       +(unk.length?`<div class="slot"><div class="t">인식 못한 파일<span class="bd warn">${unk.length}개</span></div><div class="d">${unk.map(esc).join('<br>')}</div></div>`:'');
     const ok=hasStockFile();
-    $('go').disabled=!ok; $('go2').disabled=!ok;
-    // 바코드 파일만 있을 때 매장 선택 변경 → go2 버튼 활성 상태 유지 (선택 여부는 onclick에서 체크)
+    $('go').disabled=!ok; $('go2').disabled=!ok; $('go3').disabled=!(ok&&hasT('catalog'));
     const sel=$('myStoreSel');
-    if(sel) sel.onchange=()=>{}; // change 이벤트 — 별도 액션 불필요
+    if(sel) sel.onchange=()=>{selStore=sel.value;draw();};
   }
   const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
   const wait=()=>new Promise(r=>setTimeout(r,30));
@@ -688,7 +687,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   ['dragenter','dragover'].forEach(ev=>dr.addEventListener(ev,e=>{e.preventDefault();dr.classList.add('over')}));
   ['dragleave','drop'].forEach(ev=>dr.addEventListener(ev,e=>{e.preventDefault();dr.classList.remove('over')}));
   dr.addEventListener('drop',e=>add(e.dataTransfer.files));
-  $('clr').onclick=()=>{files=[];draw();$('res').hidden=true;$('st').textContent='';};
+  $('clr').onclick=()=>{files=[];selStore='';draw();$('res').hidden=true;$('st').textContent='';};
   function kstStamp(){const d=new Date(Date.now()+9*3600e3);return d.toISOString().slice(2,10).replace(/-/g,'');}
   // 출력 범위
   const P={all:{},dead:{qty1:0,stock0:5},hi:{rate0:50},hiDead:{rate0:50,qty1:0},full:{rate0:0,rate1:0},best:{qty0:2},low:{stock0:1,stock1:2}};
@@ -708,7 +707,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   $('go').onclick=async()=>{
     // 바코드 파일 사용 시 매장 선택 필수 체크
     const hasBarcodeOnly=files.some(f=>f.type==='barcode')&&!files.some(f=>f.type==='store');
-    if(hasBarcodeOnly&&!getMyStore()){$('st').textContent='⚠️ 내 매장을 선택해 주세요 (바코드 출력 파일 아래 드롭다운).';return;}
+    if(hasBarcodeOnly&&!getMyStore()){$('st').textContent='⚠️ 내 매장을 선택해 주세요 (📍 내 매장 선택 칸).';return;}
     $('st').textContent='만드는 중…'; await wait();
     const F=getF(), fd=fDesc(F);
     const r=StyleStock.build(files.filter(f=>f.type),F,getMyStore());
@@ -740,7 +739,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     if(!hasStockFile()){$('st').textContent='⚠️ 점재고 또는 바코드 출력 파일이 필요합니다.';return;}
     // 바코드 파일 사용 시 매장 선택 필수 체크
     const hasBarcodeOnly=files.some(f=>f.type==='barcode')&&!files.some(f=>f.type==='store');
-    if(hasBarcodeOnly&&!getMyStore()){$('st').textContent='⚠️ 내 매장을 선택해 주세요 (바코드 출력 파일 아래 드롭다운).';return;}
+    if(hasBarcodeOnly&&!getMyStore()){$('st').textContent='⚠️ 내 매장을 선택해 주세요 (📍 내 매장 선택 칸).';return;}
     $('st').textContent='분석 중…'; await wait();
     const r=StyleStock.build(files.filter(f=>f.type),getF(),getMyStore());
     if(!r.has.sales){$('st').textContent='⚠️ 판매현황 파일이 없어 타매장 판매를 확인할 수 없습니다.';return;}
@@ -768,6 +767,32 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     $('kpi').innerHTML=`<div><small>해당 항목</small><b>${S2.rows.toLocaleString()}개</b></div><div><small>타매장 판매수량</small><b>${S2.qtySum.toLocaleString()}</b></div><div><small>창고재고</small><b>${r.has.wh?r.zeroStockRows.reduce((a,x)=>a+(+x.wh||0),0).toLocaleString():'미첨부'}</b></div>`;
     $('warns').innerHTML=`<li>ⓘ 내 매장(${esc(r.myStore)})에 재고 0 · 타매장 판매수량 있는 ${S2.rows}개 스타일×컬러입니다.</li>`;
     $('res').hidden=false; $('st').textContent='✅ 다운로드 완료: '+fn2;
+  };
+
+  // 전체 상품 리스트 대조 → 내 매장 미보유
+  $('go3').onclick=async()=>{
+    if(!hasT('catalog')){$('st').textContent='⚠️ 전체 상품 리스트 파일이 필요합니다.';return;}
+    if(!hasStockFile()){$('st').textContent='⚠️ 점재고 또는 바코드 출력 파일이 필요합니다.';return;}
+    if(!selStore){$('st').textContent='⚠️ 📍 내 매장을 먼저 선택해 주세요.';return;}
+    $('st').textContent='대조 중…'; await wait();
+    const r=StyleStock.build(files.filter(f=>f.type),getF(),selStore);
+    const g=r.gap;
+    if(!g){$('st').textContent='⚠️ 대조할 수 없습니다. 파일과 매장 선택을 확인해 주세요.';return;}
+    if(!g.heldCnt&&g.rows.length){ /* 보유 0건이면 경고만 (해당 카테고리 미취급 매장일 수 있음) */ }
+    $('st').textContent='엑셀 만드는 중…'; await wait();
+    const fn3=kstStamp()+'_전체상품대조_미보유_'+selStore+'.xlsx';
+    const b3=StyleStock.toGapFile(XLSX,g,r.has.wh,r.has.sales);
+    const u3=URL.createObjectURL(new Blob([b3],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+    const a3=document.createElement('a'); a3.href=u3; a3.download=fn3; document.body.appendChild(a3); a3.click(); a3.remove(); setTimeout(()=>URL.revokeObjectURL(u3),5000);
+    const c={S:0,A:0,B:0,C:0}; let cg=0; g.rows.forEach(x=>{c[x.grade]++; if(x.verdict==='칼라 결손')cg++;});
+    $('kpi').innerHTML=[['전체 상품',g.total],['보유',g.heldCnt],['미보유',g.rows.length],['🔴 S 즉시요청',c.S],['🟠 A 창고있음',c.A],['🟡 B 타매장판매',c.B],['⚪ C 재고없음',c.C]]
+      .map(([a,b])=>`<div><small>${a}</small><b>${b.toLocaleString()}</b></div>`).join('');
+    const w=[`내 매장: ${selStore} · 미보유 ${g.rows.length.toLocaleString()}건 중 칼라 결손(같은 스타일 다른 컬러만 보유) ${cg.toLocaleString()}건`];
+    if(!r.has.wh) w.push('창고재고 파일이 없어 S·A 등급이 나오지 않습니다.');
+    if(!r.has.sales) w.push('판매현황 파일이 없어 S·B 등급이 나오지 않습니다.');
+    if(!g.heldCnt) w.push('보유 상품이 0건입니다. 이 카테고리를 취급하지 않는 매장이거나, 내 매장 선택·재고 파일이 맞는지 확인해 주세요.');
+    $('warns').innerHTML=w.map(x=>'<li>ⓘ '+esc(x)+'</li>').join('');
+    $('res').hidden=false; $('st').textContent='✅ 다운로드 완료: '+fn3;
   };
 
   draw();
