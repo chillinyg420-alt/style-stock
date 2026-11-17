@@ -77,8 +77,8 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
         <tr><th>채워지는 열</th><th>ARS 화면 (원본 파일)</th></tr>
         <tr><td>점 · 브랜드 · 상품 · 스타일 · 컬러 · <b>합계 · 사이즈별 재고</b></td><td>스타일별 입출고실적조회 — <b>점</b> 기준 <span style="color:var(--sub)">또는</span> <b>바코드 출력</b> (인쇄매수 = 현재재고)</td></tr>
         <tr><td><b>창고</b> (스타일·컬러별 창고 현재재고 합계)</td><td>스타일별 입출고실적조회 — <b>창고</b> 기준</td></tr>
-        <tr><td><b>판매수량</b> · 중분류</td><td>스타일별 판매현황상세</td></tr>
-        <tr><td><b>년 · 월</b> (최종입고일) · 중분류</td><td>사이즈별 현재고 조회</td></tr>
+        <tr><td><b>판매수량</b> · 중분류·소분류</td><td>스타일별 판매현황상세</td></tr>
+        <tr><td><b>년 · 월</b> (최종입고일) · 중분류·소분류</td><td>사이즈별 현재고 조회</td></tr>
         <tr><td><b>정상가 · 판매가 · 감가율</b></td><td>Shoe Card 출력</td></tr>
       </table>
       <p style="color:var(--sub);margin:10px 0 0;line-height:1.6">
@@ -134,6 +134,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     sales:   { label: '판매현황 (스타일별 판매현황상세)' },
     size:    { label: '입고년월 (사이즈별 현재고 조회)' },
     card:    { label: '판매가 (Shoe Card 출력)' },
+    catalog: { label: '전체 상품 리스트 (카탈로그)' },
   };
 
   // 바코드 출력 파일에서 매장명 추출
@@ -170,6 +171,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     else if (has('최종입고일')) type = 'size';
     else if (has('감가율') && has('판매가')) type = 'card';
     else if (has('인쇄매수') && (has('바코드') || has('자사스타일'))) type = 'barcode';
+    else if (has('소비자가') && has('칼라') && !has('점') && !has('현재재고')) type = 'catalog';
     if (!type) return null;
     const idx = {}; H.forEach((v, i) => { if (v && !(v in idx)) idx[v] = i; });
     // 상단 메타(조회조건) 텍스트
@@ -191,7 +193,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   // files: [{name, rows}] (rows = sheet_to_json header:1)
   // filt: { rate:[min,max], qty:[min,max], stock:[min,max] } — null/'' = 제한 없음. 모두 만족(AND)하는 행만 출력
   function build(files, filt, overrideMyStore) {
-    const found = { store: [], barcode: [], wh: [], sales: [], size: [], card: [] };
+    const found = { store: [], barcode: [], wh: [], sales: [], size: [], card: [], catalog: [] };
     const unknown = [];
     for (const f of files) {
       const d = detect(f.rows);
@@ -267,7 +269,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     let salesPeriod = '';
     for (const f of found.sales) {
       const I = f.idx; const sub = salesSubIdx(f.rows, f.h);
-      const midC = sub['중분류'];
+      const midC = sub['중분류'], smC = sub['소분류'];
       const p = f.meta.find(m => m.includes('기간')); if (p && !salesPeriod) salesPeriod = p.replace(/.*기간\s*:\s*/, '');
       const qC = I['수량(합계)'] !== undefined ? I['수량(합계)'] : I['수량(매장)'];
       for (let i = f.h + 1; i < f.rows.length; i++) {
@@ -277,7 +279,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
         const k = K(store, st, r[I['컬러']]);
         sales[k] = (sales[k] || 0) + n(r[qC]);
         if (!salesKeys[k]) salesKeys[k] = { store, style: st, color: s(r[I['컬러']]) };
-        setInfo(st, r[I['컬러']], { brand: s(r[I['브랜드']]), item: s(r[I['상품']]), mid: midC !== undefined ? s(r[midC]) : '' });
+        setInfo(st, r[I['컬러']], { brand: s(r[I['브랜드']]), item: s(r[I['상품']]), mid: midC !== undefined ? s(r[midC]) : '', small: smC !== undefined ? s(r[smC]) : '' });
       }
     }
 
@@ -299,7 +301,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
         const k = K(st, co);
         if (d && (!inDate[k] || d > inDate[k])) inDate[k] = d;
         if (d && fstore) inDateStore[K(fstore, st, co)] = d;
-        setInfo(st, co, { brand: s(r[I['브랜드']]), item: s(r[I['상품']]), mid: s(r[I['중분류']]) });
+        setInfo(st, co, { brand: s(r[I['브랜드']]), item: s(r[I['상품']]), mid: s(r[I['중분류']]), small: I['소분류'] !== undefined ? s(r[I['소분류']]) : '' });
       }
     }
 
@@ -331,7 +333,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       const c = card[ik];
       rows.push({
         store: b.store, year: d ? +d.slice(0, 4) : '', month: d ? +d.slice(5, 7) : '',
-        mid: inf.mid || '', brand: inf.brand || '', item: inf.item || '', style: b.style, color: b.color,
+        mid: inf.mid || '', small: inf.small || '', brand: inf.brand || '', item: inf.item || '', style: b.style, color: b.color,
         list: c ? c.list : '', sale: c ? c.sale : '', rate: c ? c.rate : '',
         qty: k in sales ? sales[k] : '', wh: ik in wh ? wh[ik] : '',
         total: b.total, sizes: b.sizes,
@@ -397,7 +399,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
           const c = card[ik];
           zeroStockRows.push({
             store: effectiveMyStore,
-            year: '', month: '', mid: inf.mid || '',
+            year: '', month: '', mid: inf.mid || '', small: inf.small || '',
             brand: inf.brand || '', item: inf.item || '',
             style: stylePart, color: colorPart,
             list: c ? c.list : '', sale: c ? c.sale : '', rate: c ? c.rate : '',
@@ -413,10 +415,10 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
         cmp(a.style, b.style) || cmp(a.color, b.color));
     }
     const showCard = has.card;
-    const head = ['점', '년', '월', '중분류', '브랜드', '상품', '스타일', '컬러']
+    const head = ['점', '년', '월', '중분류', '소분류', '브랜드', '상품', '스타일', '컬러']
       .concat(showCard ? ['정상가', '판매가', '감가율'] : [])
       .concat(['판매수량', '창고', '합계']).concat(sizes);
-    const aoa = rows.map(r => [r.store, r.year, r.month, r.mid, r.brand, r.item, r.style, r.color]
+    const aoa = rows.map(r => [r.store, r.year, r.month, r.mid, r.small, r.brand, r.item, r.style, r.color]
       .concat(showCard ? [r.list, r.sale, r.rate] : [])
       .concat([r.qty, r.wh, r.total]).concat(sizes.map(z => r.sizes[z] || '')));
 
@@ -425,6 +427,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       rows: rows.length, rowsBefore: totalBefore, stores: new Set(rows.map(r => r.store)).size,
       ymFill: rows.filter(r => r.year !== '').length,
       midFill: rows.filter(r => r.mid).length,
+      smallFill: rows.filter(r => r.small).length,
       cardFill: rows.filter(r => r.sale !== '').length,
       whFill: rows.filter(r => r.wh !== '').length,
       qtyFill: rows.filter(r => r.qty !== '').length,
@@ -433,7 +436,52 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       salesAll: Object.values(sales).reduce((a, v) => a + v, 0),
       salesDropKeys: Object.keys(sales).filter(k => !stock[k]).length,
     };
-    return { head, aoa, sizes, found, unknown, has, stats: st, salesPeriod, sizeStores, cardStore, showCard, myStore: effectiveMyStore, zeroStockRows };
+    // ── 카탈로그 대조: 전체 상품 리스트 중 내 매장 재고 0(미보유) 상품 ──
+    // 2단 판정: 스타일 미보유(확실) / 칼라 결손(스타일은 있으나 그 칼라 없음 — 칼라명 절삭 차이로 오탐 가능)
+    // 칼라 비교: 공백·하이픈·슬래시 제거 후 짧은 쪽 길이만큼 앞부분 일치(3자 미만은 완전일치) → 양쪽 절삭 대응
+    let gap = null;
+    if (found.catalog.length && effectiveMyStore) {
+      const nc = v => norm(v).replace(/[\s\-\/]/g, '');
+      const cm = (a, b) => { const m = Math.min(a.length, b.length); return m < 3 ? a === b : a.slice(0, m) === b.slice(0, m); };
+      const held = {};   // 스타일 → [칼라] (재고 > 0)
+      const addHeld = (st, co) => { const k = norm(st); if (k) (held[k] || (held[k] = [])).push(nc(co)); };
+      for (const v of Object.values(stock)) if (norm(v.store) === norm(effectiveMyStore) && v.total > 0) addHeld(v.style, v.color);
+      if (found.store.length === 0) for (const f of found.barcode) {   // 바코드: 자사스타일 외 ERP 스타일 열도 보유로 인정(ASICS 등)
+        const I = f.idx; if (I['스타일'] === undefined) continue;
+        for (let i = f.h + 1; i < f.rows.length; i++) { const r = f.rows[i]; if (r && n(r[I['인쇄매수']]) > 0) addHeld(r[I['스타일']], r[I['컬러']]); }
+      }
+      const byStyle = (obj) => { const o = {}; for (const [k, q] of Object.entries(obj)) { if (!(q > 0)) continue; const [st, co] = k.split('\u0001'); (o[st] || (o[st] = [])).push([nc(co), q]); } return o; };
+      const whBy = byStyle(wh);
+      const os = {};
+      for (const [k, q] of Object.entries(sales)) { const x = salesKeys[k]; if (!x || norm(x.store) === norm(effectiveMyStore) || !(q > 0)) continue; const ik = K(x.style, x.color); os[ik] = (os[ik] || 0) + q; }
+      const osBy = byStyle(os);
+      const sumM = (list, c) => (list || []).reduce((t, [cc, q]) => t + (cm(cc, c) ? q : 0), 0);
+      const rows = [], seen = new Set(); let total = 0, heldCnt = 0;
+      for (const f of found.catalog) {
+        const I = f.idx;
+        for (let i = f.h + 1; i < f.rows.length; i++) {
+          const r = f.rows[i]; if (!r) continue;
+          const st = s(r[I['스타일']]); if (!st) continue;
+          const co = s(r[I['칼라']]); const ks = norm(st), kc = nc(co);
+          if (seen.has(ks + '|' + kc)) continue; seen.add(ks + '|' + kc); total++;
+          const h = held[ks]; let verdict;
+          if (!h || !h.length) verdict = '스타일 미보유';
+          else if (h.some(x => cm(x, kc))) { heldCnt++; continue; }
+          else verdict = '칼라 결손';
+          const w = sumM(whBy[ks], kc), o = sumM(osBy[ks], kc);
+          rows.push({ grade: w > 0 && o > 0 ? 'S' : w > 0 ? 'A' : o > 0 ? 'B' : 'C', verdict,
+            brand: s(r[I['브랜드']]), item: s(r[I['상품명']]), style: st, color: co,
+            price: n(r[I['소비자가']]) || '', big: s(r[I['대분류']]), mid: s(r[I['중분류']]), small: s(r[I['소분류']]),
+            wh: has.wh ? w : '', other: has.sales ? o : '' });
+        }
+      }
+      const GO = { S: 0, A: 1, B: 2, C: 3 };
+      rows.sort((a, b) => GO[a.grade] - GO[b.grade] || (a.verdict === b.verdict ? 0 : a.verdict === '스타일 미보유' ? -1 : 1)
+        || (+b.other || 0) - (+a.other || 0) || (+b.wh || 0) - (+a.wh || 0) || a.brand.localeCompare(b.brand) || a.style.localeCompare(b.style));
+      gap = { rows, total, heldCnt, store: effectiveMyStore };
+    }
+
+    return { head, aoa, sizes, found, unknown, has, stats: st, salesPeriod, sizeStores, cardStore, showCard, myStore: effectiveMyStore, zeroStockRows, gap };
   }
 
   // 결과 시트(양식: A열 비움, 1행 합계, 2행 헤더)
@@ -459,7 +507,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       sum:   ['843C0B', 'F8CBAD'],  // 합계
       size:  ['C55A11', '3B3838'],  // 사이즈 (데이터는 어두운 배경 + 흰 글씨)
     };
-    const grp = h => ['점', '년', '월', '중분류'].includes(h) ? 'key'
+    const grp = h => ['점', '년', '월', '중분류', '소분류'].includes(h) ? 'key'
       : ['브랜드', '상품', '스타일', '컬러'].includes(h) ? 'info'
       : ['정상가', '판매가', '감가율'].includes(h) ? 'price'
       : h === '판매수량' ? 'sales' : h === '창고' ? 'wh' : h === '합계' ? 'sum' : 'size';
@@ -494,7 +542,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
 
     ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 1, c: 1 }, e: { r: totalRows + 1, c: W } }) };
     ws['!cols'] = [{ wch: 2 }].concat(res.head.map((h, i) =>
-      ({ wch: h === '점' ? 18 : h === '상품' ? 26 : h === '컬러' ? 18 : h === '스타일' ? 14 : h === '브랜드' ? 13 : h === '중분류' ? 12 : i >= firstSum - (res.showCard ? 3 : 0) && i < firstSum + 3 ? 8 : (i <= 2 ? 6 : 5) })));
+      ({ wch: h === '점' ? 18 : h === '상품' ? 26 : h === '컬러' ? 18 : h === '스타일' ? 14 : h === '브랜드' ? 13 : h === '중분류' ? 12 : h === '소분류' ? 13 : i >= firstSum - (res.showCard ? 3 : 0) && i < firstSum + 3 ? 8 : (i <= 2 ? 6 : 5) })));
     return ws;
   }
 
@@ -541,7 +589,45 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     return XLSX.CFB.write(cfb, { fileType: 'zip', compression: true, type: 'array' });
   }
 
-  root.StyleStock = { fixRange, detect, build, toSheet, toFile, TYPES };
+  // 카탈로그 대조 결과 엑셀 (한 장 · 등급 열 · 자동필터 · 1행 고정)
+  function toGapFile(XLSX, gap, hasWh, hasSales) {
+    const head = ['등급', '판정', '브랜드', '상품명', '스타일', '칼라', '소비자가', '대분류', '중분류', '소분류', '창고재고', '타매장판매'];
+    const aoa = [head].concat(gap.rows.map(x => [x.grade, x.verdict, x.brand, x.item, x.style, x.color, x.price, x.big, x.mid, x.small,
+      hasWh ? x.wh : '미첨부', hasSales ? x.other : '미첨부']));
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    const ln = { style: 'thin', color: { rgb: 'BFBFBF' } }, border = { top: ln, bottom: ln, left: ln, right: ln };
+    const st = (bg, fg, bold, center, fmt) => Object.assign({ font: { name: 'Noto Sans KR', sz: 10, bold: !!bold, color: { rgb: fg || '000000' } },
+      fill: { patternType: 'solid', fgColor: { rgb: bg } }, border, alignment: { vertical: 'center', horizontal: center ? 'center' : undefined } }, fmt ? { numFmt: fmt } : {});
+    const HB = ['C00000', '595959', '1F4E79', '1F4E79', '1F4E79', '1F4E79', '44546A', '1F4E79', '1F4E79', '1F4E79', '806000', '548235'];
+    const GC = { S: ['C00000', 'FFFFFF'], A: ['F4B183', '000000'], B: ['FFE699', '000000'], C: ['EDEDED', '7F7F7F'] };
+    head.forEach((h, c) => { ws[XLSX.utils.encode_cell({ r: 0, c })].s = st(HB[c], 'FFFFFF', true, true); });
+    gap.rows.forEach((x, i) => {
+      const r = i + 1;
+      head.forEach((h, c) => {
+        const a = XLSX.utils.encode_cell({ r, c }); if (!ws[a]) ws[a] = { t: 's', v: '' };
+        if (c === 0) ws[a].s = st(GC[x.grade][0], GC[x.grade][1], true, true);
+        else if (c === 1) ws[a].s = st(x.verdict === '스타일 미보유' ? 'FCE4D6' : 'FFFFFF', '000000', x.verdict === '스타일 미보유', true);
+        else if (c === 6) ws[a].s = st('FFFFFF', '000000', false, false, '#,##0');
+        else if (c >= 10) ws[a].s = st(c === 10 ? 'FFF2CC' : 'E2F0D9', '000000', true, true, '#,##0');
+        else ws[a].s = st('FFFFFF', '000000', false, c === 7 || c === 8);
+      });
+    });
+    ws['!cols'] = [6, 13, 14, 30, 15, 26, 10, 7, 18, 14, 9, 10].map(w => ({ wch: w }));
+    ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: gap.rows.length, c: head.length - 1 } }) };
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '미보유상품');
+    const buf = XLSX.write(wb, { type: 'array', bookType: 'xlsx', compression: true });
+    const cfb = XLSX.CFB.read(new Uint8Array(buf), { type: 'array' });
+    const ent = XLSX.CFB.find(cfb, '/xl/worksheets/sheet1.xml');
+    let xml = new TextDecoder().decode(ent.content);
+    const pane = '<sheetView workbookViewId="0"><pane xSplit="2" ySplit="1" topLeftCell="C2" activePane="bottomRight" state="frozen"/><selection pane="bottomRight" activeCell="C2" sqref="C2"/></sheetView>';
+    xml = xml.replace(/<sheetView [^>]*\/>|<sheetView [^>]*>[\s\S]*?<\/sheetView>/, pane);
+    if (xml.indexOf('<pane ') < 0) xml = xml.replace('<sheetData', '<sheetViews>' + pane + '</sheetViews><sheetData');
+    ent.content = new TextEncoder().encode(xml);
+    return XLSX.CFB.write(cfb, { fileType: 'zip', compression: true, type: 'array' });
+  }
+
+  root.StyleStock = { fixRange, detect, build, toSheet, toFile, toGapFile, TYPES };
   if (typeof module !== 'undefined') module.exports = root.StyleStock;
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
@@ -551,7 +637,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   const SLOT_DESC={
     store:'합계·사이즈별 재고, 결과 행의 기준',
     barcode:'점재고 대체 — 인쇄매수=현재재고, 스타일별입출고실적조회(점) 없을 때 사용',
-    wh:'창고 열',sales:'판매수량 열 (+중분류)',size:'년·월 열 (+중분류)',card:'정상가·판매가·감가율 열'
+    wh:'창고 열',sales:'판매수량 열 (+중분류·소분류)',size:'년·월 열 (+중분류·소분류)',card:'정상가·판매가·감가율 열'
   };
   const STORE_LIST=['FH 대구동성로중앙점','GS 대구동성로중앙점','KM 대구월배이마트점','KM 대구이시아폴리스점','KM 성서홈플러스점','KM 율하롯데아울렛점','MS 대구중앙로역점','SE 경산스타필드마켓점','SE 대구롯데점','SE 대구이시아폴리스점','SP 대구동성로점','ST 구미롯데마트점','ST 구미원평점','ST 구미인동점','ST 김천롯데마트점','ST 대구성서점','ST 대구신매점','ST 대구월배점','ST 대구칠곡점','ST 대구현대아울렛점','ST 성서홈플러스점','ST 율하롯데아울렛점'];
   let files=[]; // {name, rows, type}
@@ -559,9 +645,9 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   function hasStockFile(){return files.some(f=>f.type==='store'||f.type==='barcode');}
   function getMyStore(){const el=$('myStoreSel');return el?el.value:'';}
   function draw(){
-    const by={store:[],barcode:[],wh:[],sales:[],size:[],card:[]}; const unk=[];
+    const by={store:[],barcode:[],wh:[],sales:[],size:[],card:[],catalog:[]}; const unk=[];
     files.forEach(f=>f.type?by[f.type].push(f.name):unk.push(f.name));
-    $('slots').innerHTML=Object.keys(T).map(k=>{
+    $('slots').innerHTML=Object.keys(T).filter(k=>k!=='catalog').map(k=>{
       const n=by[k].length;
       // barcode 슬롯: store가 있으면 "store로 대체됨" 표시
       if(k==='barcode'&&by.store.length>0) return `<div class="slot"><div class="t">${T[k].label}<span class="bd no">대기</span></div><div class="d" style="color:var(--warn)">스타일별입출고실적조회(점) 파일이 있어 바코드 파일은 무시됩니다</div></div>`;
@@ -635,7 +721,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     const a=document.createElement('a'); a.href=url; a.download=fn; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000);
     const S=r.stats, P=x=>S.rows?Math.round(x/S.rows*100):0;
     const k=[['행 수',S.rows.toLocaleString(),null],['매장',S.stores+'곳',null],['재고 합계',S.stockSum.toLocaleString(),null],['판매수량 합계',r.has.sales?S.qtySum.toLocaleString():'—',null],
-      ['년월 채움',r.has.size?P(S.ymFill)+'%':'미첨부',r.has.size?P(S.ymFill):null],['중분류 채움',P(S.midFill)+'%',P(S.midFill)],['창고 채움',r.has.wh?P(S.whFill)+'%':'미첨부',r.has.wh?P(S.whFill):null],['판매가 채움',r.has.card?P(S.cardFill)+'%':'미첨부',r.has.card?P(S.cardFill):null]];
+      ['년월 채움',r.has.size?P(S.ymFill)+'%':'미첨부',r.has.size?P(S.ymFill):null],['중분류 채움',P(S.midFill)+'%',P(S.midFill)],['소분류 채움',P(S.smallFill)+'%',P(S.smallFill)],['창고 채움',r.has.wh?P(S.whFill)+'%':'미첨부',r.has.wh?P(S.whFill):null],['판매가 채움',r.has.card?P(S.cardFill)+'%':'미첨부',r.has.card?P(S.cardFill):null]];
     $('kpi').innerHTML=k.map(([a,b,p])=>`<div><small>${a}</small><b>${b}</b>${p!==null?`<div class="bar"><i style="width:${p}%"></i></div>`:''}</div>`).join('');
     const w=[];
     if(fd) w.push(`출력 범위: ${fd} → 전체 ${S.rowsBefore.toLocaleString()}행 중 ${S.rows.toLocaleString()}행 출력`);
@@ -663,13 +749,13 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     $('st').textContent='엑셀 서식 입히는 중…'; await wait();
     // 같은 head/sizes 구조로 결과 만들기 (zeroStockRows를 aoa로 변환)
     const r2=Object.assign({},r,{
-      aoa:r.zeroStockRows.map(row=>[row.store,row.year,row.month,row.mid,row.brand,row.item,row.style,row.color]
+      aoa:r.zeroStockRows.map(row=>[row.store,row.year,row.month,row.mid,row.small,row.brand,row.item,row.style,row.color]
         .concat(r.showCard?[row.list,row.sale,row.rate]:[])
         .concat([row.qty,row.wh,row.total]).concat(r.sizes.map(z=>row.sizes[z]||''))),
       stats:Object.assign({},r.stats,{rows:r.zeroStockRows.length,rowsBefore:r.zeroStockRows.length,
         stores:new Set(r.zeroStockRows.map(x=>x.store)).size,
         stockSum:0,qtySum:r.zeroStockRows.reduce((a,x)=>a+(+x.qty||0),0),
-        ymFill:0,midFill:r.zeroStockRows.filter(x=>x.mid).length,
+        ymFill:0,midFill:r.zeroStockRows.filter(x=>x.mid).length,smallFill:r.zeroStockRows.filter(x=>x.small).length,
         cardFill:r.zeroStockRows.filter(x=>x.sale!=='').length,
         whFill:r.zeroStockRows.filter(x=>x.wh!=='').length,
       })
