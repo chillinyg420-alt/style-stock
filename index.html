@@ -20,7 +20,7 @@ h1{font-size:20px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px}
 .bd{font-size:11px;padding:2px 8px;border-radius:99px;white-space:nowrap}.bd.ok{background:var(--okbg);color:var(--ok)}.bd.no{background:var(--nobg);color:var(--no)}.bd.warn{background:var(--warnbg);color:var(--warn)}
 .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 button{font:inherit;border:0;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer}
-.go{background:var(--pri);color:#fff;flex:1}.go:disabled{background:#c5cede;cursor:default}.clr{background:var(--nobg);color:var(--ink)}
+.go{background:var(--pri);color:#fff;flex:1}.go:disabled{background:#c5cede !important;cursor:default}.clr{background:var(--nobg);color:var(--ink)}
 .status{margin-top:10px;color:var(--sub);min-height:20px}
 .kpi{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
 .kpi div{background:var(--bg);border-radius:10px;padding:10px}.kpi small{color:var(--sub);display:block}.kpi b{font-size:18px}
@@ -38,7 +38,7 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
 <body>
 <div class="wrap">
   <h1>📦 스타일별 재고·판매현황 추출기 <span class="bd ok">v5</span></h1>
-  <p class="lead">ARS 원본 엑셀을 넣으면 <b>점×스타일×컬러</b>별 재고·판매·창고·입고년월이 채워진 엑셀을 내려받습니다. <b>점재고(스타일별 입출고실적조회 — 점 기준) 또는 바코드 출력 파일이 필수</b>이고, 결과 행은 이 파일에 있는 점·스타일·컬러로만 만듭니다. 나머지 파일은 선택이며 없으면 그 열만 비워집니다. 파일은 이 PC 안에서만 처리되고 어디에도 전송되지 않습니다.</p>
+  <p class="lead">ARS 원본 엑셀을 넣으면 <b>점×스타일×컬러</b>별 재고·판매·창고·입고년월이 채워진 엑셀을 내려받습니다. <b>점재고는 ① 스타일별 입출고실적조회(점 기준) 또는 ② 바코드 출력 중 하나만 있으면 됩니다.</b> 결과 행은 이 점재고 파일에 있는 점·스타일·컬러로만 만듭니다. 나머지 파일은 선택이며 없으면 그 열만 비워집니다. 파일은 이 PC 안에서만 처리되고 어디에도 전송되지 않습니다.</p>
 
   <div class="card">
     <div class="drop" id="drop"><b>여기에 원본 엑셀을 끌어다 놓기</b><p>또는 눌러서 선택 · 여러 개 한꺼번에 · 순서 상관없음 (종류는 자동 인식)</p></div>
@@ -61,7 +61,7 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
         <label>재고(합계)<span><input id="stock0" type="number" inputmode="numeric" placeholder="최소"> ~ <input id="stock1" type="number" inputmode="numeric" placeholder="최대"></span></label>
       </div>
     </div>
-    <div class="btns"><button class="go" id="go" disabled>엑셀 만들기 · 다운로드</button><button class="go" id="go2" disabled style="background:var(--ok);flex:0 0 auto">타매장 판매 · 내 재고없음</button><button class="go" id="go3" disabled style="background:#7030A0;flex:0 0 auto">전체 상품 대조 · 내 매장 미보유</button><button class="clr" id="clr">초기화</button></div>
+    <div class="btns"><button class="go" id="go" disabled>엑셀 만들기 · 다운로드</button><button class="go" id="go2" disabled style="background:var(--ok);flex:0 0 auto">타매장 판매 · 내 재고없음</button><button class="go" id="go3" disabled style="background:#7030A0;flex:0 0 auto">상품 리스트 대조 · 내 매장 미보유</button><button class="clr" id="clr">초기화</button></div>
     <div class="status" id="st"></div>
   </div>
 
@@ -80,7 +80,7 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
         <tr><td><b>판매수량</b> · 중분류·소분류</td><td>스타일별 판매현황상세</td></tr>
         <tr><td><b>년 · 월</b> (최종입고일) · 중분류·소분류</td><td>사이즈별 현재고 조회</td></tr>
         <tr><td><b>정상가 · 판매가 · 감가율</b></td><td>Shoe Card 출력</td></tr>
-        <tr><td><b>전체 상품 대조</b> (내 매장 미보유 상품)</td><td>카테고리별 <b>전체 상품 리스트</b> (브랜드·상품명·스타일·칼라·소비자가·분류)</td></tr>
+        <tr><td><b>상품 리스트 대조</b> (내 매장 미보유 상품)</td><td><b>아무 상품 리스트</b> — 범위(카테고리·브랜드·행사 등)와 양식 무관. 스타일(품번) 열만 있으면 자동 인식</td></tr>
       </table>
       <p style="color:var(--sub);margin:10px 0 0;line-height:1.6">
         · 결과 1행은 열별 합계, 2행은 제목, 3행부터 데이터입니다(기존 양식과 동일). 필터가 걸려 있어 '점' 열로 매장을 고르면 됩니다.<br>
@@ -88,7 +88,7 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
         · 바코드 출력 파일을 쓸 때: 스타일별입출고실적조회(점) 파일 없이 바코드 파일만 넣으면 됩니다. 두 파일을 동시에 넣으면 스타일별입출고실적조회가 우선입니다.<br>
         · 점재고에 있지만 현재재고 0이고 판매도 없는 행은 뺍니다.<br>
         · 출력 범위: 감가율·판매수량·재고(합계)에 최소~최대를 넣으면 모두 만족하는 행만 엑셀에 담습니다. 판매 없음은 0, 감가율 조건이 있으면 Shoe Card에 없는 행은 빠집니다. 파일 이름에 조건이 붙습니다.<br>
-        · 전체 상품 대조: 상품 리스트 + 점재고(또는 바코드) 파일을 넣고 내 매장을 고른 뒤 보라색 버튼. 현재재고 0이면 미보유로 봅니다. 창고재고·판매현황을 같이 넣으면 등급이 붙습니다 — <b>S</b> 창고 있음+타매장 판매 → 즉시 입고요청 · <b>A</b> 창고 있음 · <b>B</b> 타매장 판매만 → 점간이동 검토 · <b>C</b> 재고 없음. "칼라 결손"은 같은 스타일 다른 컬러만 보유한 경우입니다.<br>
+        · 상품 리스트 대조: 스타일(품번) 열이 있는 엑셀이면 어떤 리스트든 됩니다. 제목 행 위치·열 순서·시트 위치는 도구가 찾고, 칼라 열이 없으면 스타일 단위로 비교합니다. 상품 리스트 + 점재고(①·② 중 하나) 파일을 넣고 내 매장을 고른 뒤 보라색 버튼. 현재재고 0이면 미보유로 봅니다. 창고재고·판매현황을 같이 넣으면 등급이 붙습니다 — <b>S</b> 창고 있음+타매장 판매 → 즉시 입고요청 · <b>A</b> 창고 있음 · <b>B</b> 타매장 판매만 → 점간이동 검토 · <b>C</b> 재고 없음. "칼라 결손"은 같은 스타일 다른 컬러만 보유한 경우입니다.<br>
         · 문의: 대경지역 지역장
       </p>
     </details>
@@ -126,17 +126,52 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       const cells = r.map(s);
       if (cells.includes('스타일') && cells.filter(Boolean).length >= 5) return i;
     }
+    // 양식이 다른 상품 리스트: 스타일 계열 열 이름이 있고 값이 2칸 이상인 첫 행
+    for (let i = 0; i < Math.min(60, rows.length); i++) {
+      const r = rows[i] || [];
+      if (r.map(s).filter(Boolean).length >= 2 && r.some(v => ALIAS.style.includes(hn(v)))) return i;
+    }
     return -1;
   }
 
+  // 상품 리스트 열 이름 후보 (공백 제거·대문자 비교)
+  const hn = v => s(v).replace(/\s+/g, '').toUpperCase();
+  const ALIAS = {
+    style: ['자사스타일', '스타일', '스타일코드', '스타일번호', '스타일NO', '품번', '품번코드', '모델번호', '모델코드', '상품코드', '제품코드', 'STYLE', 'STYLENO', 'STYLECODE', 'ARTICLE', 'ARTICLENO', 'SKU'],
+    color: ['칼라', '컬러', '색상', '칼라코드', '컬러코드', '색상코드', '칼라명', '컬러명', '색상명', 'COLOR', 'COLOUR', 'COLORCODE'],
+    item:  ['상품명', '상품', '모델명', '제품명', '품명', '상품명(영문)', 'MODEL', 'NAME', 'PRODUCTNAME', 'DESCRIPTION'],
+    brand: ['브랜드', '브랜드명', 'BRAND'],
+    price: ['소비자가', '정상가', '판매가', 'TAG가', '택가', '가격', '단가', 'PRICE', 'RRP', 'MSRP'],
+    big:   ['대분류', '카테고리', 'CATEGORY'],
+    mid:   ['중분류'],
+    small: ['소분류', '세분류'],
+  };
+  // 헤더 행(+분류가 2줄인 경우 다음 행)에서 열 위치 찾기
+  function catalogCols(rows, h) {
+    const H = (rows[h] || []).map(hn), H2 = (rows[h + 1] || []).map(hn);
+    const sub = H2.some(v => ['대분류', '중분류', '소분류'].includes(v));   // 2줄 헤더
+    const o = {};
+    for (const k in ALIAS) {
+      for (const a of ALIAS[k]) {
+        let i = H.indexOf(a); if (i < 0 && sub) i = H2.indexOf(a);
+        if (i >= 0 && !Object.values(o).includes(i)) { o[k] = i; break; }
+      }
+    }
+    // 스타일 열이 두 개(자사스타일·스타일)면 둘 다 대조에 사용
+    const s2 = ALIAS.style.map(a => H.indexOf(a)).filter(i => i >= 0 && i !== o.style);
+    if (s2.length) o.style2 = s2[0];
+    o.start = h + (sub ? 2 : 1);
+    return o;
+  }
+
   const TYPES = {
-    store:   { label: '점재고 (스타일별입출고실적조회) · 필수' },
-    barcode: { label: '점재고 대체 (바코드 출력) · store 대신 사용' },
+    store:   { label: '점재고 ① 스타일별입출고실적조회' },
+    barcode: { label: '점재고 ② 바코드 출력' },
     wh:      { label: '창고재고 (스타일별입출고실적조회)' },
     sales:   { label: '판매현황 (스타일별 판매현황상세)' },
     size:    { label: '입고년월 (사이즈별 현재고 조회)' },
     card:    { label: '판매가 (Shoe Card 출력)' },
-    catalog: { label: '전체 상품 리스트 (카탈로그)' },
+    catalog: { label: '상품 리스트 (대조용)' },
   };
 
   // 바코드 출력 파일에서 매장명 추출
@@ -173,14 +208,15 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     else if (has('최종입고일')) type = 'size';
     else if (has('감가율') && has('판매가')) type = 'card';
     else if (has('인쇄매수') && (has('바코드') || has('자사스타일'))) type = 'barcode';
-    else if (has('소비자가') && has('칼라') && !has('점') && !has('현재재고')) type = 'catalog';
+    else if (H.some(v => ALIAS.style.includes(hn(v))) && !has('점') && !has('창고') && !has('현재재고') && !has('인쇄매수')) type = 'catalog';   // 상품 리스트: 양식 무관, 스타일 열만 있으면 인식
     if (!type) return null;
     const idx = {}; H.forEach((v, i) => { if (v && !(v in idx)) idx[v] = i; });
     // 상단 메타(조회조건) 텍스트
     const meta = rows.slice(0, h).map(r => s((r || [])[0])).filter(Boolean);
     // 바코드 파일은 매장명을 메타에서 추출
     const barcodeStore = type === 'barcode' ? extractBarcodeStore(rows, h) : '';
-    return { type, h, H, idx, meta, barcodeStore };
+    const cols = type === 'catalog' ? catalogCols(rows, h) : null;
+    return { type, h, H, idx, meta, barcodeStore, cols };
   }
 
   // 판매현황은 헤더가 2줄(대분류/중분류/소분류가 둘째 줄)
@@ -443,7 +479,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     // 칼라 비교: 공백·하이픈·슬래시 제거 후 짧은 쪽 길이만큼 앞부분 일치(3자 미만은 완전일치) → 양쪽 절삭 대응
     let gap = null;
     if (found.catalog.length && effectiveMyStore) {
-      const nc = v => norm(v).replace(/[\s\-\/]/g, '');
+      const nc = v => { const x = norm(v).replace(/[\s\-\/]/g, ''); return /^\d+$/.test(x) ? String(+x) : x; };
       const cm = (a, b) => { const m = Math.min(a.length, b.length); return m < 3 ? a === b : a.slice(0, m) === b.slice(0, m); };
       const held = {};   // 스타일 → [칼라] (재고 > 0)
       const addHeld = (st, co) => { const k = norm(st); if (k) (held[k] || (held[k] = [])).push(nc(co)); };
@@ -457,23 +493,30 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       const os = {};
       for (const [k, q] of Object.entries(sales)) { const x = salesKeys[k]; if (!x || norm(x.store) === norm(effectiveMyStore) || !(q > 0)) continue; const ik = K(x.style, x.color); os[ik] = (os[ik] || 0) + q; }
       const osBy = byStyle(os);
-      const sumM = (list, c) => (list || []).reduce((t, [cc, q]) => t + (cm(cc, c) ? q : 0), 0);
+      const sumM = (list, c) => (list || []).reduce((t, [cc, q]) => t + (!c || cm(cc, c) ? q : 0), 0);
       const rows = [], seen = new Set(); let total = 0, heldCnt = 0;
       for (const f of found.catalog) {
-        const I = f.idx;
-        for (let i = f.h + 1; i < f.rows.length; i++) {
+        const c = f.cols, g = (r, k) => c[k] !== undefined ? r[c[k]] : '';
+        const hdr = new Set((f.rows[f.h] || []).map(hn));
+        for (let i = c.start; i < f.rows.length; i++) {
           const r = f.rows[i]; if (!r) continue;
-          const st = s(r[I['스타일']]); if (!st) continue;
-          const co = s(r[I['칼라']]); const ks = norm(st), kc = nc(co);
+          const st = s(g(r, 'style')); if (!st || hdr.has(hn(st)) || /합계|소계|TOTAL/i.test(st)) continue;
+          const st2 = s(g(r, 'style2'));
+          const co = s(g(r, 'color'));
+          // 내 매장 재고에 있는 스타일 키 (스타일 열이 2개면 둘 중 맞는 쪽)
+          const ks = !held[norm(st)] && st2 && held[norm(st2)] ? norm(st2) : norm(st);
+          const kc = nc(co);
           if (seen.has(ks + '|' + kc)) continue; seen.add(ks + '|' + kc); total++;
           const h = held[ks]; let verdict;
           if (!h || !h.length) verdict = '스타일 미보유';
-          else if (h.some(x => cm(x, kc))) { heldCnt++; continue; }
+          else if (!kc || h.some(x => cm(x, kc))) { heldCnt++; continue; }   // 칼라 열이 없으면 스타일 단위로 판정
           else verdict = '칼라 결손';
-          const w = sumM(whBy[ks], kc), o = sumM(osBy[ks], kc);
+          const wk = whBy[ks] ? ks : (st2 ? norm(st2) : ks), okk = osBy[ks] ? ks : (st2 ? norm(st2) : ks);
+          const w = sumM(whBy[wk], kc), o = sumM(osBy[okk], kc);
+          const inf = info[K(st, co)] || (st2 ? info[K(st2, co)] : null) || {};   // 리스트에 없는 열은 ARS 파일 정보로 보충
           rows.push({ grade: w > 0 && o > 0 ? 'S' : w > 0 ? 'A' : o > 0 ? 'B' : 'C', verdict,
-            brand: s(r[I['브랜드']]), item: s(r[I['상품명']]), style: st, color: co,
-            price: n(r[I['소비자가']]) || '', big: s(r[I['대분류']]), mid: s(r[I['중분류']]), small: s(r[I['소분류']]),
+            brand: s(g(r, 'brand')) || inf.brand || '', item: s(g(r, 'item')) || inf.item || '', style: st, color: co,
+            price: n(g(r, 'price')) || '', big: s(g(r, 'big')), mid: s(g(r, 'mid')) || inf.mid || '', small: s(g(r, 'small')) || inf.small || '',
             wh: has.wh ? w : '', other: has.sales ? o : '' });
         }
       }
@@ -637,9 +680,9 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
 (function(){
   const T=StyleStock.TYPES;
   const SLOT_DESC={
-    store:'합계·사이즈별 재고, 결과 행의 기준',
-    barcode:'점재고 대체 — 인쇄매수=현재재고, 스타일별입출고실적조회(점) 없을 때 사용',
-    wh:'창고 열',sales:'판매수량 열 (+중분류·소분류)',size:'년·월 열 (+중분류·소분류)',card:'정상가·판매가·감가율 열',catalog:'전체 상품 대조 기준 (보라색 버튼)'
+    store:'합계·사이즈별 재고 · ①② 중 하나 필수',
+    barcode:'인쇄매수 = 현재재고 · ①② 중 하나 필수 (둘 다 넣으면 ① 우선)',
+    wh:'창고 열',sales:'판매수량 열 (+중분류·소분류)',size:'년·월 열 (+중분류·소분류)',card:'정상가·판매가·감가율 열',catalog:'대조할 상품 범위 — 양식 무관, 스타일 열 자동 인식 (보라색 버튼)'
   };
   const STORE_LIST=['FH 대구동성로중앙점','GS 대구동성로중앙점','KM 대구월배이마트점','KM 대구이시아폴리스점','KM 성서홈플러스점','KM 율하롯데아울렛점','MS 대구중앙로역점','SE 경산스타필드마켓점','SE 대구롯데점','SE 대구이시아폴리스점','SP 대구동성로점','ST 구미롯데마트점','ST 구미원평점','ST 구미인동점','ST 김천롯데마트점','ST 대구성서점','ST 대구신매점','ST 대구월배점','ST 대구칠곡점','ST 대구현대아울렛점','ST 성서홈플러스점','ST 율하롯데아울렛점'];
   let files=[]; // {name, rows, type}
@@ -656,7 +699,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       const n=by[k].length;
       // barcode 슬롯: store가 있으면 "store로 대체됨" 표시
       if(k==='barcode'&&by.store.length>0) return `<div class="slot"><div class="t">${T[k].label}<span class="bd no">대기</span></div><div class="d" style="color:var(--warn)">스타일별입출고실적조회(점) 파일이 있어 바코드 파일은 무시됩니다</div></div>`;
-      return `<div class="slot"><div class="t">${T[k].label}<span class="bd ${n?'ok':'no'}">${n?'✓ '+n+'개':'미첨부'}</span></div><div class="d">${n?'→ ':'없으면 비움: '}${SLOT_DESC[k]}</div>${n?`<div class="f">${by[k].map(esc).join('<br>')}</div>`:''}</div>`;
+      return `<div class="slot"><div class="t">${T[k].label}<span class="bd ${n?'ok':'no'}">${n?'✓ '+n+'개':'미첨부'}</span></div><div class="d">${(k==='store'||k==='barcode')&&!n?(hasStockFile()?'다른 점재고 파일 사용 중 — 없어도 됨':'①② 중 하나는 꼭 넣어 주세요'):(n?'→ ':'없으면 비움: ')+SLOT_DESC[k]}</div>${n?`<div class="f">${by[k].map(esc).join('<br>')}</div>`:''}</div>`;
     }).join('')
       +(needStore()?`<div class="slot" style="border-color:var(--pri)"><div class="t">📍 내 매장 선택<span class="bd ${selStore?'ok':'warn'}">${selStore?'✓ 선택됨':'필수'}</span></div><div class="d">${hasT('catalog')?'미보유 상품 대조 기준 매장':'바코드 파일의 매장 = 타매장 비교 기준'}</div><select id="myStoreSel" style="margin-top:6px;padding:6px 8px;border-radius:6px;border:1px solid var(--line);font:inherit;width:100%"><option value="">— 내 매장 선택 —</option>${STORE_LIST.map(s=>`<option${s===selStore?' selected':''}>${esc(s)}</option>`).join('')}</select></div>`:'')
       +(unk.length?`<div class="slot"><div class="t">인식 못한 파일<span class="bd warn">${unk.length}개</span></div><div class="d">${unk.map(esc).join('<br>')}</div></div>`:'');
@@ -673,9 +716,13 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       const f=list[i]; $('st').textContent=`읽는 중 (${i+1}/${list.length}) ${f.name} — 큰 파일은 10~30초 걸릴 수 있어요`; await wait();
       try{
         const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});
-        const ws=wb.Sheets[wb.SheetNames[0]]; StyleStock.fixRange(XLSX,ws);
-        const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null});
-        const d=StyleStock.detect(rows);
+        let rows=[],d=null;   // 첫 시트에서 못 찾으면 다른 시트도 확인 (상품 리스트 양식 대응)
+        for(const sn of wb.SheetNames){
+          const ws=wb.Sheets[sn]; StyleStock.fixRange(XLSX,ws);
+          const rr=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null});
+          const dd=StyleStock.detect(rr); if(!rows.length) rows=rr;
+          if(dd){rows=rr;d=dd;break;}
+        }
         files.push({name:f.name,rows,type:d?d.type:null});
       }catch(e){files.push({name:f.name+' (읽기 실패)',rows:[],type:null});}
       draw();
@@ -769,9 +816,9 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     $('res').hidden=false; $('st').textContent='✅ 다운로드 완료: '+fn2;
   };
 
-  // 전체 상품 리스트 대조 → 내 매장 미보유
+  // 상품 리스트 대조 → 내 매장 미보유
   $('go3').onclick=async()=>{
-    if(!hasT('catalog')){$('st').textContent='⚠️ 전체 상품 리스트 파일이 필요합니다.';return;}
+    if(!hasT('catalog')){$('st').textContent='⚠️ 대조할 상품 리스트 파일이 필요합니다.';return;}
     if(!hasStockFile()){$('st').textContent='⚠️ 점재고 또는 바코드 출력 파일이 필요합니다.';return;}
     if(!selStore){$('st').textContent='⚠️ 📍 내 매장을 먼저 선택해 주세요.';return;}
     $('st').textContent='대조 중…'; await wait();
@@ -780,12 +827,12 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     if(!g){$('st').textContent='⚠️ 대조할 수 없습니다. 파일과 매장 선택을 확인해 주세요.';return;}
     if(!g.heldCnt&&g.rows.length){ /* 보유 0건이면 경고만 (해당 카테고리 미취급 매장일 수 있음) */ }
     $('st').textContent='엑셀 만드는 중…'; await wait();
-    const fn3=kstStamp()+'_전체상품대조_미보유_'+selStore+'.xlsx';
+    const fn3=kstStamp()+'_상품리스트대조_미보유_'+selStore+'.xlsx';
     const b3=StyleStock.toGapFile(XLSX,g,r.has.wh,r.has.sales);
     const u3=URL.createObjectURL(new Blob([b3],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
     const a3=document.createElement('a'); a3.href=u3; a3.download=fn3; document.body.appendChild(a3); a3.click(); a3.remove(); setTimeout(()=>URL.revokeObjectURL(u3),5000);
     const c={S:0,A:0,B:0,C:0}; let cg=0; g.rows.forEach(x=>{c[x.grade]++; if(x.verdict==='칼라 결손')cg++;});
-    $('kpi').innerHTML=[['전체 상품',g.total],['보유',g.heldCnt],['미보유',g.rows.length],['🔴 S 즉시요청',c.S],['🟠 A 창고있음',c.A],['🟡 B 타매장판매',c.B],['⚪ C 재고없음',c.C]]
+    $('kpi').innerHTML=[['리스트 상품',g.total],['보유',g.heldCnt],['미보유',g.rows.length],['🔴 S 즉시요청',c.S],['🟠 A 창고있음',c.A],['🟡 B 타매장판매',c.B],['⚪ C 재고없음',c.C]]
       .map(([a,b])=>`<div><small>${a}</small><b>${b.toLocaleString()}</b></div>`).join('');
     const w=[`내 매장: ${selStore} · 미보유 ${g.rows.length.toLocaleString()}건 중 칼라 결손(같은 스타일 다른 컬러만 보유) ${cg.toLocaleString()}건`];
     if(!r.has.wh) w.push('창고재고 파일이 없어 S·A 등급이 나오지 않습니다.');
