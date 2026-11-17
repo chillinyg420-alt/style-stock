@@ -33,8 +33,8 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
 </head>
 <body>
 <div class="wrap">
-  <h1>📦 스타일별 재고·판매현황 추출기 <span class="bd ok">v3</span></h1>
-  <p class="lead">ERP 원본 엑셀을 넣으면 <b>점×스타일×컬러</b>별 재고·판매·창고·입고년월이 채워진 엑셀을 내려받습니다. 모든 파일은 선택사항이며, 없는 파일의 열만 비워집니다. 파일은 이 PC 안에서만 처리되고 어디에도 전송되지 않습니다.</p>
+  <h1>📦 스타일별 재고·판매현황 추출기 <span class="bd ok">v4</span></h1>
+  <p class="lead">ERP 원본 엑셀을 넣으면 <b>점×스타일×컬러</b>별 재고·판매·창고·입고년월이 채워진 엑셀을 내려받습니다. <b>점재고(스타일별 입출고실적조회 — 점 기준) 파일은 필수</b>이고, 결과 행은 이 파일에 있는 점·스타일·컬러로만 만듭니다. 나머지 파일은 선택이며 없으면 그 열만 비워집니다. 파일은 이 PC 안에서만 처리되고 어디에도 전송되지 않습니다.</p>
 
   <div class="card">
     <div class="drop" id="drop"><b>여기에 원본 엑셀을 끌어다 놓기</b><p>또는 눌러서 선택 · 여러 개 한꺼번에 · 순서 상관없음 (종류는 자동 인식)</p></div>
@@ -62,8 +62,8 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
       </table>
       <p style="color:var(--sub);margin:10px 0 0;line-height:1.6">
         · 결과 1행은 열별 합계, 2행은 제목, 3행부터 데이터입니다(기존 양식과 동일). 필터가 걸려 있어 '점' 열로 매장을 고르면 됩니다.<br>
-        · 재고 0이면서 판매도 없는 행은 빼고, 재고가 없어도 판매가 있으면 행을 만듭니다(합계 0으로 표시).<br>
-        · 점재고 파일 없이 '사이즈별 현재고 조회'만 넣으면 그 파일의 매장 재고로 대신 채웁니다.<br>
+        · 결과 행은 점재고 파일 기준입니다. 판매가 있어도 점재고 파일에 없는 점·스타일·컬러는 행을 만들지 않습니다.<br>
+        · 점재고에 있지만 현재재고 0이고 판매도 없는 행은 뺍니다.<br>
         · 문의: 대경지역 지역장
       </p>
     </details>
@@ -105,7 +105,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   }
 
   const TYPES = {
-    store:  { label: '점재고 (스타일별입출고실적조회)' },
+    store:  { label: '점재고 (스타일별입출고실적조회) · 필수' },
     wh:     { label: '창고재고 (스타일별입출고실적조회)' },
     sales:  { label: '판매현황 (스타일별 판매현황상세)' },
     size:   { label: '입고년월 (사이즈별 현재고 조회)' },
@@ -206,7 +206,6 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
         const k = K(store, st, r[I['컬러']]);
         sales[k] = (sales[k] || 0) + n(r[qC]);
         if (!salesKeys[k]) salesKeys[k] = { store, style: st, color: s(r[I['컬러']]) };
-        if (!storeOrder.includes(store)) storeOrder.push(store);
         setInfo(st, r[I['컬러']], { brand: s(r[I['브랜드']]), item: s(r[I['상품']]), mid: midC !== undefined ? s(r[midC]) : '' });
       }
     }
@@ -230,15 +229,6 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
         if (d && (!inDate[k] || d > inDate[k])) inDate[k] = d;
         if (d && fstore) inDateStore[K(fstore, st, co)] = d;
         setInfo(st, co, { brand: s(r[I['브랜드']]), item: s(r[I['상품']]), mid: s(r[I['중분류']]) });
-        // 점재고 파일이 없을 때만 이 파일을 해당 매장 재고로 사용
-        if (!found.store.length && fstore) {
-          f.H.forEach((z, c) => {
-            if (c > I['재고'] && s((f.rows[f.h] || [])[c])) {
-              const q = n(r[c]); if (q) addStock(fstore, st, co, z, q, {});
-            }
-          });
-          if (!stock[K(fstore, st, co)]) addStock(fstore, st, co, '', 0, {});
-        }
       }
     }
 
@@ -257,13 +247,13 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       }
     }
 
-    // 결과 행: 점재고 ∪ 판매 (재고 0이고 판매도 0인 행 제외)
-    const keys = new Set();
-    for (const k in stock) if (stock[k].total !== 0) keys.add(k);
-    for (const k in salesKeys) keys.add(k);
+    // 결과 행 = 점재고(스타일별입출고실적조회) 파일에 있는 점·스타일·컬러만.
+    // 판매·창고·입고일·가격은 이 행에 값을 채우는 용도로만 사용 (점재고에 없으면 행을 만들지 않음)
+    // 점재고에 있어도 현재재고 0 + 판매 없음이면 제외
     let rows = [];
-    for (const k of keys) {
-      const b = stock[k] || Object.assign({ sizes: {}, total: 0 }, salesKeys[k]);
+    for (const k in stock) {
+      const b = stock[k];
+      if (b.total === 0 && !(sales[k] > 0)) continue;
       const ik = K(b.style, b.color);
       const inf = info[ik] || {};
       const d = inDateStore[K(b.store, b.style, b.color)] || inDate[ik] || '';
@@ -276,21 +266,12 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
         total: b.total, sizes: b.sizes,
       });
     }
-    // 매장 행이 하나도 없으면 창고 기준 스타일 목록
-    if (!rows.length && found.wh.length) {
-      for (const ik in wh) {
-        const inf = info[ik] || {}; const d = inDate[ik] || ''; const c = card[ik];
-        rows.push({ store: '(창고)', year: d ? +d.slice(0, 4) : '', month: d ? +d.slice(5, 7) : '', mid: inf.mid || '',
-          brand: inf.brand || '', item: inf.item || '', style: inf.style, color: inf.color,
-          list: c ? c.list : '', sale: c ? c.sale : '', rate: c ? c.rate : '', qty: '', wh: wh[ik], total: '', sizes: {} });
-      }
-    }
     const so = st => { const i = storeOrder.indexOf(st); return i < 0 ? 9999 : i; };
     const cmp = (a, b) => a < b ? -1 : a > b ? 1 : 0;
     rows.sort((a, b) => so(a.store) - so(b.store) || cmp(a.brand, b.brand) || cmp(a.item, b.item) || cmp(a.style, b.style) || cmp(a.color, b.color));
 
     const sizes = Array.from(sizeSet).sort(sizeSort);
-    const has = { store: found.store.length > 0 || (found.size.length > 0), wh: found.wh.length > 0, sales: found.sales.length > 0, size: found.size.length > 0, card: found.card.length > 0 };
+    const has = { store: found.store.length > 0, wh: found.wh.length > 0, sales: found.sales.length > 0, size: found.size.length > 0, card: found.card.length > 0 };
     const showCard = has.card;
     const head = ['점', '년', '월', '중분류', '브랜드', '상품', '스타일', '컬러']
       .concat(showCard ? ['정상가', '판매가', '감가율'] : [])
@@ -309,6 +290,8 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       qtyFill: rows.filter(r => r.qty !== '').length,
       qtySum: rows.reduce((a, r) => a + (+r.qty || 0), 0),
       stockSum: rows.reduce((a, r) => a + (+r.total || 0), 0),
+      salesAll: Object.values(sales).reduce((a, v) => a + v, 0),
+      salesDropKeys: Object.keys(sales).filter(k => !stock[k]).length,
     };
     return { head, aoa, sizes, found, unknown, has, stats: st, salesPeriod, sizeStores, cardStore, showCard };
   }
@@ -462,7 +445,8 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   $('go').onclick=async()=>{
     $('st').textContent='만드는 중…'; await wait();
     const r=StyleStock.build(files.filter(f=>f.type));
-    if(!r.aoa.length){$('st').textContent='만들 행이 없습니다. 점재고·판매현황·현재고조회·창고재고 중 하나는 필요합니다.';return;}
+    if(!r.found.store.length){$('st').textContent='⚠️ 점재고 파일(스타일별 입출고실적조회 — 점 기준)이 필요합니다. 결과 행은 이 파일 기준으로 만듭니다.';return;}
+    if(!r.aoa.length){$('st').textContent='만들 행이 없습니다. 점재고 파일에 재고나 판매가 있는 행이 없습니다.';return;}
     $('st').textContent='엑셀 서식 입히는 중… (10~20초)'; await wait();
     const fn=kstStamp()+'_스타일별재고및판매현황.xlsx';
     const bytes=StyleStock.toFile(XLSX,r);
@@ -476,8 +460,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     if(r.salesPeriod) w.push('판매수량 기간: '+r.salesPeriod);
     if(r.has.size&&r.sizeStores.length===1) w.push(`입고년월은 '${r.sizeStores[0]}' 조회 파일 기준입니다. 그 매장에 없는 스타일은 비어 있어요(매장별 파일을 같이 넣으면 채움률이 올라갑니다).`);
     if(r.has.card&&r.cardStore) w.push(`판매가는 Shoe Card '${r.cardStore}' 기준입니다.`);
-    if(!r.found.store.length&&r.has.size) w.push('점재고 파일이 없어 사이즈별 현재고 조회 파일의 재고로 대신 채웠습니다.');
-    if(!r.found.store.length&&!r.has.size&&r.has.sales) w.push('재고 파일이 없어 판매가 있는 행만 만들었습니다(합계·사이즈 비움).');
+    if(r.has.sales&&r.stats.salesDropKeys) w.push(`판매 데이터 중 점재고 파일에 없는 ${r.stats.salesDropKeys.toLocaleString()}건(수량 ${(S.salesAll-S.qtySum).toLocaleString()})은 행을 만들지 않았습니다(점재고 기준).`);
     $('warns').innerHTML=w.map(x=>'<li>ⓘ '+esc(x)+'</li>').join('');
     $('res').hidden=false; $('st').textContent='✅ 다운로드 완료: '+fn;
   };
