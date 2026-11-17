@@ -33,7 +33,7 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
 </head>
 <body>
 <div class="wrap">
-  <h1>📦 스타일별 재고·판매현황 추출기 <span class="bd ok">v2</span></h1>
+  <h1>📦 스타일별 재고·판매현황 추출기 <span class="bd ok">v3</span></h1>
   <p class="lead">ERP 원본 엑셀을 넣으면 <b>점×스타일×컬러</b>별 재고·판매·창고·입고년월이 채워진 엑셀을 내려받습니다. 모든 파일은 선택사항이며, 없는 파일의 열만 비워집니다. 파일은 이 PC 안에서만 처리되고 어디에도 전송되지 않습니다.</p>
 
   <div class="card">
@@ -352,6 +352,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       hdrS[i] = mk(C[g][0], 'FFFFFF', true);
       datS[i] = mk(C[g][1], g === 'size' ? 'FFFFFF' : '000000', g === 'size' || g === 'sum' || h === '년' || h === '월' || h === '감가율');
       if (!num) datS[i].alignment.horizontal = undefined;
+      if (h === '정상가' || h === '판매가') datS[i].numFmt = '#,##0';
     });
     const totalRows = res.aoa.length;
     for (let c = 0; c < W; c++) {
@@ -401,6 +402,18 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       return a === b && colStyle[L] ? `${all} style="${colStyle[L]}"` : all;
     });
     xml = xml.replace('<row r="1"', '<row r="1" s="0" customFormat="1"');
+    if (res.firstSizeCol > 0) {
+      const tl = XLSX.utils.encode_cell({ r: 2, c: res.firstSizeCol });
+      const br = XLSX.utils.encode_cell({ r: res.aoa.length + 1, c: res.head.length });
+      const cf = `<conditionalFormatting sqref="${tl}:${br}"><cfRule type="containsBlanks" dxfId="0" priority="1"><formula>LEN(TRIM(${tl}))=0</formula></cfRule></conditionalFormatting>`;
+      xml = /<autoFilter [^>]*\/>/.test(xml) ? xml.replace(/(<autoFilter [^>]*\/>)/, '$1' + cf) : xml.replace('</sheetData>', '</sheetData>' + cf);
+      const se = XLSX.CFB.find(cfb, '/xl/styles.xml');
+      let sx = new TextDecoder().decode(se.content);
+      const dxf = '<dxfs count="1"><dxf><fill><patternFill patternType="solid"><bgColor rgb="FFFFE699"/></patternFill></fill></dxf></dxfs>';
+      sx = sx.replace(/<dxfs count="0"\s*\/>|<dxfs[^>]*>[\s\S]*?<\/dxfs>/, dxf);
+      if (sx.indexOf('<dxfs') < 0) sx = sx.replace('<tableStyles', dxf + '<tableStyles');
+      se.content = new TextEncoder().encode(sx);
+    }
     ent.content = new TextEncoder().encode(xml);
     return XLSX.CFB.write(cfb, { fileType: 'zip', compression: true, type: 'array' });
   }
