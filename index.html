@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>대경지역 허용인시 현황 — 10월</title>
+<style>
+  :root{
+    --navy:#002060; --navy-bg:#D9E1F2; --slate:#595959;
+    --pos:#0070C0; --neg:#C00000; --warn:#B5651D;
+    --input-bg:#FFF2CC; --border:#DEE1E6; --bg:#F4F6F9; --card:#FFFFFF; --text:#1F2430; --muted:#8A8F98;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;}
+  header{background:var(--navy);color:#fff;padding:16px;}
+  header .top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;max-width:1100px;margin:0 auto;}
+  header h1{margin:0;font-size:18px;font-weight:700;}
+  header .meta{font-size:12px;color:#C9D6EE;}
+  main{max-width:1100px;margin:0 auto;padding:14px;}
+
+  .region-upload{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px;}
+  .region-upload label{font-weight:700;font-size:13px;white-space:nowrap;}
+  .region-upload input[type=file]{font-size:12.5px;}
+  #region-upload-status, #consol-upload-status{font-size:12px;color:var(--muted);}
+  #region-upload-status.ok, #consol-upload-status.ok{color:#146C2E;font-weight:600;}
+  .guide-box{border:1px solid var(--border);border-radius:8px;padding:12px;background:#F7F9FC;margin-bottom:14px;font-size:12.5px;}
+  .guide-title{font-weight:700;margin-bottom:6px;}
+  .guide-me{padding:8px 10px;border-radius:6px;margin-bottom:6px;line-height:1.6;}
+  .guide-me.mall{background:#EEF1F5;} .guide-me.street{background:#E4EEFB;}
+  .guide-box summary{cursor:pointer;color:var(--navy);font-weight:600;margin:4px 0;}
+  .guide-list{margin:4px 0;line-height:1.6;} .guide-list.muted{color:var(--muted);font-size:12px;}
+  .manual-row{margin-top:8px;display:flex;flex-direction:column;gap:4px;} .manual-row label{font-size:11px;font-weight:600;color:var(--muted);} .manual-row input{padding:6px 8px;border:1px solid var(--border);border-radius:5px;background:var(--input-bg);font-size:12.5px;}
+  .warn-box{background:#FFF3E0;border:1px solid #F2D2A8;color:var(--warn);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;font-weight:600;}
+
+  .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:16px;}
+  .summary-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;}
+  .summary-card .label{font-size:12px;color:var(--muted);margin-bottom:6px;}
+  .summary-card .value{font-size:20px;font-weight:800;}
+  .summary-card .value.neg{color:var(--neg);}
+  .summary-card .value.pos{color:var(--pos);}
+  .summary-card .value.muted-value{font-size:15px;font-weight:600;color:var(--muted);}
+
+  section.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px;}
+  section.card h2{margin:0 0 4px;font-size:15px;font-weight:700;}
+  section.card .sub{font-size:12px;color:var(--muted);margin-bottom:12px;}
+
+  .toolbar{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;align-items:center;}
+  .toolbar input[type=search]{flex:1;min-width:160px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;}
+  .hint{font-size:11.5px;color:var(--muted);margin-top:6px;}
+
+  table{border-collapse:collapse;width:100%;font-size:12.5px;}
+  thead th{background:var(--navy);color:#fff;padding:9px 7px;text-align:center;font-weight:600;font-size:11.5px;white-space:nowrap;}
+  thead th[data-key]{cursor:pointer;user-select:none;}
+  thead th[data-key]:hover{background:#012E82;}
+  thead th .arrow{opacity:.6;font-size:10px;margin-left:2px;}
+  tbody td{padding:6px;border-bottom:1px solid var(--border);text-align:center;white-space:nowrap;}
+  tbody td.name-cell{text-align:left;font-weight:600;}
+  tbody tr:hover{background:#F7F9FC;}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;}
+
+  .hc-input{width:52px;padding:5px;border:1px solid var(--border);border-radius:5px;background:var(--input-bg);font-size:12.5px;text-align:center;}
+
+  .chip{display:inline-block;padding:3px 9px;border-radius:100px;font-size:12px;font-weight:700;}
+  .chip.pos-chip{background:#E4EEFB;color:var(--pos);}
+  .chip.neg-chip{background:#FBE9E9;color:var(--neg);}
+  .chip.warn-chip{background:#FFF3E0;color:var(--warn);}
+
+  .table-scroll{overflow-x:auto;}
+  footer{max-width:1100px;margin:0 auto;padding:8px 14px 30px;font-size:11px;color:var(--muted);}
+
+  .store-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .store-head select{padding:8px 12px;border-radius:8px;border:1px solid var(--border);font-size:13.5px;min-width:220px;font-weight:600;}
+  .panel-block{border:1px solid var(--border);border-radius:8px;padding:12px;background:#FAFBFD;}
+  .panel-block h3{margin:0 0 10px;font-size:12.5px;font-weight:700;color:var(--slate);}
+  #daily-file-input{width:100%;font-size:12px;margin-bottom:6px;}
+  .upload-status{font-size:11.5px;color:var(--muted);}
+  .need-tag{background:#FFF3E0;color:var(--warn);border-radius:5px;padding:1px 6px;font-size:10.5px;margin-left:4px;}
+  .opt-tag{background:#EEF1F5;color:var(--muted);border-radius:5px;padding:1px 6px;font-size:10.5px;margin-left:4px;}
+  .panel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:14px;}
+  #daily-file-input, #panel-consol-input{width:100%;font-size:12px;margin-bottom:6px;}
+  .upload-status.ok{color:#146C2E;font-weight:600;}
+
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;}
+  .kpi-card{border:1px solid var(--border);border-radius:8px;padding:10px;background:#FAFBFD;}
+  .kpi-label{font-size:11.5px;color:var(--muted);margin-bottom:6px;}
+  .kpi-value{font-size:16px;font-weight:700;}
+  .kpi-value.muted-value{font-size:14px;font-weight:600;color:var(--muted);}
+
+  @media (max-width:760px){
+    #main-table thead, #sales-table thead{display:none;}
+    #main-table, #main-table tbody, #main-table tr, #main-table td,
+    #sales-table, #sales-table tbody, #sales-table tr, #sales-table td{display:block;width:100%;}
+    #main-table tbody tr, #sales-table tbody tr{border:1px solid var(--border);border-radius:8px;margin-bottom:10px;padding:8px 4px;background:#fff;}
+    #main-table tbody td, #sales-table tbody td{display:flex;justify-content:space-between;align-items:center;text-align:right;border:none;padding:5px 8px;white-space:normal;}
+    #main-table tbody td::before, #sales-table tbody td::before{content:attr(data-label);font-weight:600;color:var(--muted);font-size:11.5px;text-align:left;}
+    #main-table tbody td.name-cell, #sales-table tbody td.name-cell{font-size:14.5px;justify-content:flex-start;gap:8px;}
+    #main-table tbody td.name-cell::before, #sales-table tbody td.name-cell::before{content:'';}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top">
+    <h1>대경지역 허용인시 현황</h1>
+    <span class="meta">10월 기준 · 허용인시는 8월 부여 기준 적용 · 생성 2026-10-06 12:32</span>
+  </div>
+</header>
+
+<main>
+  <div class="region-upload">
+    <label>📤 전 매장 일자별 매출현황 업로드</label>
+    <input type="file" id="region-upload-input" accept=".xlsx,.xls" />
+    <span id="region-upload-status"></span>
+  </div>
+  <div class="region-upload">
+    <label>📤 재고통합 매출 파일 업로드</label>
+    <input type="file" id="consol-upload-input" accept=".xlsx,.xls" />
+    <span id="consol-upload-status"></span>
+  </div>
+  <div id="consol-warning" class="warn-box" style="display:none;"></div>
+
+  <div class="summary-grid" id="summary-grid"></div>
+
+  <section class="card">
+    <h2>전체 매장 현황</h2>
+    <div class="sub">근로형태별 인원수를 입력하면 잔여인시(월)·잔여인시(월평균)이 즉시 반영됩니다. 열 제목을 클릭하면 정렬됩니다.</div>
+    <div class="toolbar">
+      <input type="search" id="search-input" placeholder="매장명 검색..." />
+    </div>
+    <div class="table-scroll">
+      <table id="main-table">
+        <thead>
+          <tr>
+            <th data-key="name">매장명</th>
+            <th data-key="target">목표</th>
+            <th>정규직</th><th>2D/8H</th><th>3D/8H</th><th>5D/4H</th><th>5D/6H</th><th>5D/8H</th>
+            <th data-key="remainBySales">잔여인시(월)</th>
+            <th data-key="remainByAvg">잔여인시(월평균)</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>개별 매장 확인 — 목표 대비 매출정보</h2>
+    <div class="sub">매장을 선택해 일자별 매출현황 파일을 올리면 예상마감·과부족금액이 실시간으로 계산됩니다.</div>
+    <div id="store-panel"></div>
+  </section>
+</main>
+
+<footer>
+  ABC-Mart 대경지역 · 본사 제공 목표·인시생산 값과 매장 입력 인원수, 업로드한 매출 데이터를 기준으로 계산합니다.
+  평일/휴일 구분에는 2026년 대한민국 법정 공휴일(대체공휴일 포함)이 자동 반영됩니다.
+  업로드한 매출 데이터는 이 브라우저 안에서만 계산되고 외부로 전송되지 않습니다.
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const DATA = {"month": "10월", "stores": [{"name": "FH 대구동성로중앙점", "target": 180000000, "productivity": 148148.14814814815, "allowedTotal": 1215, "allowedShort": 503, "allowedBySales": 1218.0213, "allowedByAvg": 973.9867477500001, "ot": 40, "headcount": {"정규직": 4, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 1}, "intern": 0, "remain": 215, "remainBySales": 218.0213000000001, "remainByAvg": -26.013252249999937, "type": "가두점"}, {"name": "GS 대구동성로중앙점", "target": 260000000, "productivity": 184100.41841004184, "allowedTotal": 1412.2727272727273, "allowedShort": 700.2727272727273, "allowedBySales": 1463.4018886363638, "allowedByAvg": 1284.6118278409092, "ot": 40, "headcount": {"정규직": 4, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 4}, "intern": 0, "remain": -91.72727272727275, "remainBySales": -40.598111363636235, "remainByAvg": -219.3881721590908, "type": "가두점"}, {"name": "KM 대구월배이마트점", "target": 50000000, "productivity": 109289.6174863388, "allowedTotal": 457.5, "allowedShort": 81.5, "allowedBySales": 615.0800800000001, "allowedByAvg": 471.4582152, "ot": 40, "headcount": {"정규직": 2, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 0}, "intern": 0, "remain": 41.5, "remainBySales": 199.08008000000007, "remainByAvg": 55.458215199999984, "type": "몰입점"}, {"name": "KM 대구이시아폴리스점", "target": 100000000, "productivity": 103383.45864661653, "allowedTotal": 967.2727272727274, "allowedShort": 591.2727272727274, "allowedBySales": 1276.594228848485, "allowedByAvg": 821.6918945454546, "ot": 40, "headcount": {"정규직": 2, "2D/8H": 0, "3D/8H": 2, "5D/4H": 0, "5D/6H": 0, "5D/8H": 0}, "intern": 0, "remain": 343.27272727272737, "remainBySales": 652.594228848485, "remainByAvg": 197.6918945454546, "type": "몰입점"}, {"name": "KM 성서홈플러스점", "target": 35000000, "productivity": 112612.61261261262, "allowedTotal": 310.8, "allowedShort": 102.80000000000001, "allowedBySales": 237.84192, "allowedByAvg": 342.43955544, "ot": 40, "headcount": {"정규직": 1, "2D/8H": 1, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 0}, "intern": 0, "remain": 38.80000000000001, "remainBySales": -34.15808000000001, "remainByAvg": 70.43955543999999, "type": "몰입점"}, {"name": "KM 율하롯데아울렛점", "target": 45000000, "productivity": 113207.54716981133, "allowedTotal": 397.5, "allowedShort": 194.5, "allowedBySales": 378.4031577777777, "allowedByAvg": 365.03651066666663, "ot": 35, "headcount": {"정규직": 1, "2D/8H": 0, "3D/8H": 1, "5D/4H": 0, "5D/6H": 0, "5D/8H": 0}, "intern": 0, "remain": 90.5, "remainBySales": 71.40315777777772, "remainByAvg": 58.03651066666663, "type": "몰입점"}, {"name": "MS 대구중앙로역점", "target": 220000000, "productivity": 143396.22641509434, "allowedTotal": 1534.2105263157896, "allowedShort": 822.2105263157896, "allowedBySales": 1763.8890482456138, "allowedByAvg": 1363.1406480263158, "ot": 40, "headcount": {"정규직": 4, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 2}, "intern": 0, "remain": 366.2105263157896, "remainBySales": 595.8890482456138, "remainByAvg": 195.14064802631583, "type": "가두점"}, {"name": "SE 경산스타필드마켓점", "target": 210000000, "productivity": 146092.03798392988, "allowedTotal": 1437.4499999999998, "allowedShort": 893.4499999999998, "allowedBySales": 1675.0450153, "allowedByAvg": 1586.1518067499999, "ot": 40, "headcount": {"정규직": 3, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 2}, "intern": 0, "remain": 477.4499999999998, "remainBySales": 715.0450152999999, "remainByAvg": 626.1518067499999, "type": "몰입점"}, {"name": "SE 대구롯데점", "target": 90000000, "productivity": 123966.94214876032, "allowedTotal": 726, "allowedShort": 192, "allowedBySales": 850.8772164444445, "allowedByAvg": 756.8270732000001, "ot": 30, "headcount": {"정규직": 3, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 1}, "intern": 0, "remain": -36, "remainBySales": 88.87721644444446, "remainByAvg": -5.172926799999914, "type": "몰입점"}, {"name": "SE 대구이시아폴리스점", "target": 270000000, "productivity": 152671.75572519083, "allowedTotal": 1768.5000000000002, "allowedShort": 1056.5000000000002, "allowedBySales": 2056.7318330000003, "allowedByAvg": 1787.12402765, "ot": 40, "headcount": {"정규직": 4, "2D/8H": 1, "3D/8H": 7, "5D/4H": 0, "5D/6H": 0, "5D/8H": 0}, "intern": 0, "remain": 144.50000000000023, "remainBySales": 432.7318330000003, "remainByAvg": 163.12402765000002, "type": "몰입점"}, {"name": "SP 대구동성로점", "target": 240000000, "productivity": 142857.14285714287, "allowedTotal": 1679.9999999999998, "allowedShort": 967.9999999999998, "allowedBySales": 1975.7633466666666, "allowedByAvg": 1873.8632499999999, "ot": 40, "headcount": {"정규직": 4, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 5}, "intern": 0, "remain": 7.999999999999773, "remainBySales": 303.7633466666666, "remainByAvg": 201.86324999999988, "type": "몰입점"}, {"name": "ST 구미롯데마트점", "target": 200000000, "productivity": 135782.74760383388, "allowedTotal": 1472.941176470588, "allowedShort": 1096.941176470588, "allowedBySales": 1664.0620205490193, "allowedByAvg": 1419.345818235294, "ot": 40, "headcount": {"정규직": 2, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 4}, "intern": 0, "remain": 384.94117647058806, "remainBySales": 576.0620205490193, "remainByAvg": 331.345818235294, "type": "몰입점"}, {"name": "ST 구미원평점", "target": 120000000, "productivity": 127551.02040816327, "allowedTotal": 940.8, "allowedShort": 574.8, "allowedBySales": 1162.6850666666664, "allowedByAvg": 927.6423239999999, "ot": 30, "headcount": {"정규직": 2, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 2}, "intern": 0, "remain": 208.79999999999995, "remainBySales": 430.68506666666644, "remainByAvg": 195.64232399999992, "type": "가두점"}, {"name": "ST 구미인동점", "target": 100000000, "productivity": 112866.8171557562, "allowedTotal": 886, "allowedShort": 347, "allowedBySales": 748.078152, "allowedByAvg": 887.1697415000001, "ot": 35, "headcount": {"정규직": 3, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 1}, "intern": 0, "remain": 109, "remainBySales": -28.921847999999954, "remainByAvg": 110.1697415000001, "type": "가두점"}, {"name": "ST 김천롯데마트점", "target": 90000000, "productivity": 114358.32274459975, "allowedTotal": 787, "allowedShort": 243, "allowedBySales": 721.9399925185186, "allowedByAvg": 732.5781542555555, "ot": 40, "headcount": {"정규직": 3, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 0}, "intern": 0, "remain": 163, "remainBySales": 97.93999251851858, "remainByAvg": 108.57815425555555, "type": "몰입점"}, {"name": "ST 대구성서점", "target": 190000000, "productivity": 135623.86980108498, "allowedTotal": 1400.9333333333334, "allowedShort": 1024.9333333333334, "allowedBySales": 1460.9672591111112, "allowedByAvg": 1332.0224844266668, "ot": 40, "headcount": {"정규직": 2, "2D/8H": 0, "3D/8H": 3, "5D/4H": 0, "5D/6H": 0, "5D/8H": 2}, "intern": 0, "remain": 336.9333333333334, "remainBySales": 396.96725911111116, "remainByAvg": 268.0224844266668, "type": "가두점"}, {"name": "ST 대구신매점", "target": 80000000, "productivity": 119225.03725782414, "allowedTotal": 671, "allowedShort": 132, "allowedBySales": 617.9806554166667, "allowedByAvg": 660.1949121625, "ot": 35, "headcount": {"정규직": 3, "2D/8H": 0, "3D/8H": 1, "5D/4H": 0, "5D/6H": 0, "5D/8H": 0}, "intern": 0, "remain": -42, "remainBySales": -95.01934458333335, "remainByAvg": -52.80508783749997, "type": "가두점"}, {"name": "ST 대구월배점", "target": 90000000, "productivity": 112517.58087201125, "allowedTotal": 799.875, "allowedShort": 255.875, "allowedBySales": 723.10270125, "allowedByAvg": 810.99955485, "ot": 40, "headcount": {"정규직": 3, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 1}, "intern": 0, "remain": 7.875, "remainBySales": -68.89729875, "remainByAvg": 18.99955484999998, "type": "가두점"}, {"name": "ST 대구칠곡점", "target": 110000000, "productivity": 114285.71428571429, "allowedTotal": 962.5, "allowedShort": 423.5, "allowedBySales": 940.0469166666667, "allowedByAvg": 950.76428125, "ot": 35, "headcount": {"정규직": 3, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 2}, "intern": 0, "remain": 17.5, "remainBySales": -4.953083333333325, "remainByAvg": 5.764281249999954, "type": "가두점"}, {"name": "ST 대구현대아울렛점", "target": 100000000, "productivity": 129032.25806451614, "allowedTotal": 775, "allowedShort": 236, "allowedBySales": 808.4555616666665, "allowedByAvg": 821.28513125, "ot": 35, "headcount": {"정규직": 3, "2D/8H": 0, "3D/8H": 1, "5D/4H": 0, "5D/6H": 0, "5D/8H": 0}, "intern": 0, "remain": 62, "remainBySales": 95.45556166666654, "remainByAvg": 108.28513124999995, "type": "몰입점"}, {"name": "ST 성서홈플러스점", "target": 100000000, "productivity": 133333.33333333334, "allowedTotal": 750, "allowedShort": 374, "allowedBySales": 746.1008999999999, "allowedByAvg": 890.1206099999999, "ot": 40, "headcount": {"정규직": 2, "2D/8H": 0, "3D/8H": 0, "5D/4H": 0, "5D/6H": 0, "5D/8H": 2}, "intern": 0, "remain": -2, "remainBySales": -5.8991000000000895, "remainByAvg": 138.12060999999994, "type": "몰입점"}, {"name": "ST 율하롯데아울렛점", "target": 150000000, "productivity": 131578.94736842104, "allowedTotal": 1140.0000000000002, "allowedShort": 433.0000000000002, "allowedBySales": 1190.0736640000002, "allowedByAvg": 1164.4641188, "ot": 35, "headcount": {"정규직": 4, "2D/8H": 0, "3D/8H": 1, "5D/4H": 0, "5D/6H": 0, "5D/8H": 1}, "intern": 0, "remain": 56.00000000000023, "remainBySales": 106.07366400000024, "remainByAvg": 80.46411880000005, "type": "몰입점"}], "regionTotal": {"name": "대경지역", "target": 3030000000, "productivity": 128463.4956357523, "allowedTotal": 21277.555490665163, "allowedShort": 10743.555490665167, "allowedBySales": 23077.12062476467, "allowedByAvg": 21248.93194004936, "ot": null, "headcount": {"정규직": 58, "2D/8H": 2, "3D/8H": 16, "5D/4H": 0, "5D/6H": 0, "5D/8H": 29}, "intern": 0, "remain": 2899.555490665166, "remainBySales": 4702.141924764669, "remainByAvg": 2629.918687799362}, "generatedAt": "2026-10-06 12:32"};
+</script>
+<script>/* ============ 상수 ============ */
+const STANDARD_HOURS = { '정규직': 168, '2D/8H': 64, '3D/8H': 104, '5D/4H': 84, '5D/6H': 126, '5D/8H': 168 };
+const EMP_TYPES = ['정규직', '2D/8H', '3D/8H', '5D/4H', '5D/6H', '5D/8H'];
+// 저장 키에 기준월·생성시각을 포함 → 새 파일로 다시 만든 페이지는 이전에 입력해 둔 인원수 대신 새 파일의 현재 인원으로 시작합니다.
+const LS_KEY = 'abcmart_allowedhours_v3_' + (DATA.month || '') + '_' + (DATA.generatedAt || '');
+
+// 2026년 대한민국 법정 공휴일(대체공휴일 포함) — 매장 매출은 평일보다 주말·공휴일에 패턴이
+// 달라지므로 예상마감 추정 시 "휴일"로 분류합니다. 근로자의 날(5/1)은 관공서 공휴일이
+// 아니므로 제외했습니다. 연도가 바뀌면 이 배열만 갱신하면 됩니다.
+const KR_HOLIDAYS_2026 = [
+  '2026-01-01',
+  '2026-02-16', '2026-02-17', '2026-02-18',
+  '2026-03-01', '2026-03-02',
+  '2026-05-05',
+  '2026-05-24', '2026-05-25',
+  '2026-06-06',
+  '2026-08-15', '2026-08-17',
+  '2026-09-24', '2026-09-25', '2026-09-26',
+  '2026-10-03', '2026-10-05',
+  '2026-10-09',
+  '2026-12-25',
+];
+
+/* ============ 상태 ============ */
+const state = {
+  overrides: {},
+  daily: {},
+  selectedStore: null,
+  regionUploaded: false,
+  regionUploadInfo: '',
+  consol: null,      // { byStore:{name:재고통합매출}, periodText, info }
+  consolManual: {},  // 매장별 재고통합 매출 직접 입력값 (파일보다 우선)
+};
+
+function loadOverrides() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) state.overrides = JSON.parse(raw).overrides || {};
+  } catch (e) { /* ignore */ }
+  DATA.stores.forEach(s => {
+    if (!state.overrides[s.name]) {
+      state.overrides[s.name] = { headcount: { ...s.headcount } };
+    }
+  });
+}
+function persistOverrides() {
+  localStorage.setItem(LS_KEY, JSON.stringify({ overrides: state.overrides }));
+}
+
+/* ============ 유틸 ============ */
+function fmt(n, digits) {
+  if (n === null || n === undefined || isNaN(n)) return '-';
+  return Number(n).toLocaleString('ko-KR', { maximumFractionDigits: digits ?? 0 });
+}
+function fmtSigned(n, unit) {
+  if (n === null || n === undefined || isNaN(n)) return '-';
+  const sign = n >= 0 ? '+' : '';
+  return sign + fmt(n) + (unit || '');
+}
+function signClass(n) {
+  if (n === null || n === undefined || isNaN(n)) return '';
+  return n >= 0 ? 'pos-chip' : 'neg-chip';
+}
+function daysInMonth(year, monthIndex0) { return new Date(year, monthIndex0 + 1, 0).getDate(); }
+function isHoliday(dateObj) {
+  const dow = dateObj.getDay();
+  if (dow === 0 || dow === 6) return true;
+  const y = dateObj.getFullYear(), m = String(dateObj.getMonth() + 1).padStart(2, '0'), d = String(dateObj.getDate()).padStart(2, '0');
+  return KR_HOLIDAYS_2026.includes(`${y}-${m}-${d}`);
+}
+function countWeekdayHoliday(year, monthIndex0) {
+  const total = daysInMonth(year, monthIndex0);
+  let holiday = 0, weekday = 0;
+  for (let d = 1; d <= total; d++) {
+    if (isHoliday(new Date(year, monthIndex0, d))) holiday++; else weekday++;
+  }
+  return { weekday, holiday };
+}
+
+/* ============ 계산 엔진 ============ */
+function assignedHoursOf(store) {
+  const hc = state.overrides[store.name].headcount;
+  const ot = Number(store.ot) || 0;
+  let h = (Number(hc['정규직']) || 0) * (STANDARD_HOURS['정규직'] + ot);
+  EMP_TYPES.forEach(t => { if (t !== '정규직') h += (Number(hc[t]) || 0) * STANDARD_HOURS[t]; });
+  return h;
+}
+
+function computeLive(store) {
+  const assignedHours = assignedHoursOf(store);
+  const daily = state.daily[store.name];
+
+  let forecastClose, forecastSource;
+  if (daily && daily.byDate.length > 0) {
+    let year = null, monthIndex0 = null;
+    let wSum = 0, hSum = 0, wElapsed = 0, hElapsed = 0;
+    daily.byDate.forEach(r => {
+      if (year === null) { year = r.date.getFullYear(); monthIndex0 = r.date.getMonth(); }
+      if (isHoliday(r.date)) { hSum += r.value; hElapsed++; }
+      else { wSum += r.value; wElapsed++; }
+    });
+    // 몰입점: 일자별 매출에는 오프라인만 잡히므로, 기간별 매출분석의 재고통합매출을
+    // 경과일수로 나눠 하루당 같은 금액으로 더한다. (가두점은 이미 합산되어 있어 제외)
+    let consolNote = '';
+    if (store.type === '몰입점') {
+      const manual = state.consolManual[store.name];
+      const amt = manual !== undefined ? manual : (state.consol ? state.consol.byStore[store.name] : undefined);
+      if (amt !== undefined && (wElapsed + hElapsed) > 0) {
+        // 재고통합은 경과일수로 나눠 하루당 같은 금액으로 평일/휴일에 배분 (기존 관리 워크북과 동일 방식)
+        const perDay = amt / (wElapsed + hElapsed);
+        wSum += perDay * wElapsed;
+        hSum += perDay * hElapsed;
+        consolNote = manual !== undefined ? ' · 재고통합 반영(직접 입력)' : ' · 재고통합 반영';
+      } else {
+        consolNote = ' · 재고통합 미반영(재고통합 매출 파일 업로드 필요)';
+      }
+    }
+    const mtdTotal = wSum + hSum;
+    const cal = countWeekdayHoliday(year, monthIndex0);
+    const wRemain = Math.max(cal.weekday - wElapsed, 0);
+    const hRemain = Math.max(cal.holiday - hElapsed, 0);
+    const projW = wElapsed > 0 ? (wSum / wElapsed) * wRemain : 0;
+    const projH = hElapsed > 0 ? (hSum / hElapsed) * hRemain : 0;
+    forecastClose = projW + projH + mtdTotal;
+    forecastSource = `실시간 반영 (경과 평일 ${wElapsed}일 · 휴일 ${hElapsed}일)${consolNote}`;
+  } else if (store.productivity) {
+    forecastClose = (store.allowedBySales ?? 0) * store.productivity;
+    forecastSource = '파일 기준 추정 · 일자별 매출 업로드 시 실시간으로 갱신됩니다';
+  } else {
+    forecastClose = null;
+    forecastSource = '-';
+  }
+
+  const forecastRate = (forecastClose !== null && store.target) ? forecastClose / store.target : null;
+  const target85 = store.target !== null && store.target !== undefined ? store.target * 0.85 : null;
+  const shortfall85 = (forecastClose !== null && target85 !== null) ? forecastClose - target85 : null;
+  const allowedBySalesLive = (forecastClose !== null && store.productivity) ? forecastClose / store.productivity : store.allowedBySales;
+  const remainBySales = allowedBySalesLive !== null && allowedBySalesLive !== undefined ? allowedBySalesLive - assignedHours : null;
+  const remainByAvg = (store.allowedByAvg ?? null) !== null ? store.allowedByAvg - assignedHours : null;
+
+  return {
+    store, assignedHours, forecastClose, forecastSource, forecastRate,
+    target85, shortfall85, allowedBySalesLive, remainBySales, remainByAvg,
+    hasDaily: !!(daily && daily.byDate.length > 0),
+  };
+}
+
+/* ============ 엑셀 파싱 (일자별 매출현황) ============ */
+function fixSheetRange(ws) {
+  let maxRow = -1, maxCol = -1;
+  Object.keys(ws).forEach(key => {
+    if (key[0] === '!') return;
+    const a = XLSX.utils.decode_cell(key);
+    if (a.r > maxRow) maxRow = a.r;
+    if (a.c > maxCol) maxCol = a.c;
+  });
+  if (maxRow === -1) return;
+  const declared = ws['!ref'] ? XLSX.utils.decode_range(ws['!ref']) : null;
+  if (!declared || declared.e.r < maxRow || declared.e.c < maxCol) {
+    ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: maxRow, c: maxCol } });
+  }
+}
+function excelDateToJSDate(v) {
+  // 엑셀 날짜(일련번호)를 "그 나라 달력 날짜 그대로" 로컬 자정 Date로 변환합니다.
+  // (SheetJS의 cellDates 옵션은 한국 시간대(UTC+9)에서 하루 전 날짜로 읽히는 문제가 있어 사용하지 않습니다.)
+  if (typeof v === 'number') {
+    const o = XLSX.SSF.parse_date_code(v);
+    if (o && o.y) return new Date(o.y, o.m - 1, o.d);
+    return null;
+  }
+  if (v instanceof Date) return new Date(v.getFullYear(), v.getMonth(), v.getDate());
+  if (typeof v === 'string') {
+    const m = v.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  }
+  return null;
+}
+function findHeaderRow(rows) {
+  for (let r = 0; r < rows.length; r++) {
+    const row = rows[r] || [];
+    for (let c = 0; c < row.length; c++) {
+      if (String(row[c] ?? '').trim() === 'NO') return r;
+    }
+  }
+  return -1;
+}
+function parseDailyFile(rows, storeName) {
+  const headerRow = findHeaderRow(rows);
+  if (headerRow === -1) throw new Error('헤더(NO/일자) 행을 찾지 못했습니다.');
+  const header = rows[headerRow];
+  const dateCol = header.findIndex(v => String(v ?? '').trim() === '일자');
+  if (dateCol === -1) throw new Error('"일자" 열을 찾지 못했습니다.');
+  const dataCols = [];
+  header.forEach((v, idx) => {
+    const name = String(v ?? '').trim();
+    if (idx > dateCol && name && name !== '합계') dataCols.push({ name, idx });
+  });
+  let targetCol = dataCols.find(c => c.name === storeName);
+  let sourceLabel = targetCol ? `"${storeName}" 열 사용` : '';
+  if (!targetCol) {
+    if (dataCols.length === 1) { targetCol = dataCols[0]; sourceLabel = '단일 매장 파일로 인식'; }
+    else throw new Error(`"${storeName}" 매장 열을 찾지 못했습니다. (발견된 열: ${dataCols.map(c => c.name).join(', ') || '없음'})`);
+  }
+  const byDate = [];
+  for (let r = headerRow + 1; r < rows.length; r++) {
+    const row = rows[r] || [];
+    const first = String(row[0] ?? '').trim();
+    if (first === '합계') break;
+    const dv = row[dateCol];
+    if (dv === undefined || dv === null || dv === '') continue;
+    const dt = excelDateToJSDate(dv);
+    if (!dt) continue;
+    byDate.push({ date: dt, value: Number(row[targetCol.idx]) || 0 });
+  }
+  return { byDate, sourceLabel };
+}
+function sheetToRows(ws) {
+  fixSheetRange(ws);
+  return XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: null });
+}
+/* ============ 지역 전체 일자별 매출현황 업로드 (다중 매장 열) ============ */
+function parseRegionDailyRows(rows) {
+  const headerRow = findHeaderRow(rows);
+  if (headerRow === -1) throw new Error('헤더(NO/일자) 행을 찾지 못했습니다.');
+  const header = rows[headerRow];
+  const dateCol = header.findIndex(v => String(v ?? '').trim() === '일자');
+  if (dateCol === -1) throw new Error('"일자" 열을 찾지 못했습니다.');
+  const storeCols = {};
+  header.forEach((v, idx) => {
+    const name = String(v ?? '').trim();
+    if (idx > dateCol && name && name !== '합계') storeCols[name] = idx;
+  });
+  const matched = Object.keys(storeCols).filter(n => DATA.stores.some(s => s.name === n));
+  if (matched.length === 0) {
+    throw new Error('파일의 매장명 열이 도구에 등록된 매장명과 하나도 일치하지 않습니다. (예: "FH 대구동성로중앙점")');
+  }
+  const byStore = {};
+  matched.forEach(n => { byStore[n] = []; });
+  for (let r = headerRow + 1; r < rows.length; r++) {
+    const row = rows[r] || [];
+    const first = String(row[0] ?? '').trim();
+    if (first === '합계') break;
+    const dv = row[dateCol];
+    if (dv === undefined || dv === null || dv === '') continue;
+    const dt = excelDateToJSDate(dv);
+    if (!dt) continue;
+    matched.forEach(n => {
+      byStore[n].push({ date: dt, value: Number(row[storeCols[n]]) || 0 });
+    });
+  }
+  return { byStore, matchedCount: matched.length };
+}
+async function handleRegionDailyUpload(file) {
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, { type: 'array' });
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = sheetToRows(ws);
+  const { byStore, matchedCount } = parseRegionDailyRows(rows);
+  Object.entries(byStore).forEach(([name, byDate]) => {
+    state.daily[name] = { byDate, sourceLabel: `${file.name} (전체 매장 업로드)` };
+  });
+  state.regionUploaded = true;
+  state.regionUploadInfo = `${file.name} · ${matchedCount}개 매장 반영`;
+}
+async function handleDailyUpload(file, storeName) {
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, { type: 'array' });
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = sheetToRows(ws);
+  const parsed = parseDailyFile(rows, storeName);
+  parsed.sourceLabel = `${file.name} · ${parsed.sourceLabel}`;
+  state.daily[storeName] = parsed;
+}
+
+
+/* ============ 기간별 매출분석(채널) 업로드 — 몰입점 재고통합매출 ============ */
+function normLabel(v) { return String(v ?? '').replace(/\s+/g, '').trim(); }
+function toNumber(v) {
+  if (typeof v === 'number') return v;
+  const n = Number(String(v ?? '').replace(/[,\s원]/g, ''));
+  return isNaN(n) ? 0 : n;
+}
+// 재고통합 "금액" 열의 이름인지 판단 (수량/총매출/전체매출/포함 등이 들어간 열은 제외)
+function isConsolAmountLabel(n) {
+  return n.includes('재고통합') && (n.includes('매출') || n.includes('금액')) && !/(수량|포함|총|전체|합계|비율|구성)/.test(n);
+}
+// 재고통합 매출이 들어있는 파일을 양식과 상관없이 읽는다.
+// ① "재고통합매출" 이름의 열을 찾고 ② 매장명이 적힌 열을 찾은 뒤 ③ 등록된 매장명과 일치하는 행만 읽는다.
+function parseConsolRows(rows) {
+  // ① 금액 열 찾기: 왼쪽에서 가장 먼저 나오는 열(=금년 기준)을 사용
+  let amtRow = -1, amtCol = -1, amtLabel = '';
+  for (let r = 0; r < Math.min(rows.length, 40) && amtRow === -1; r++) {
+    const row = rows[r] || [];
+    for (let c = 0; c < row.length; c++) {
+      if (isConsolAmountLabel(normLabel(row[c]))) { amtRow = r; amtCol = c; amtLabel = String(row[c]).replace(/\s+/g, ' ').trim(); break; }
+    }
+  }
+  if (amtRow === -1) throw new Error('파일에서 "재고통합매출" 열을 찾지 못했습니다. 재고통합 매출 금액이 들어있는 파일이 맞는지 확인해 주세요.');
+
+  // ② 매장명 열 찾기
+  const storeNames = {};
+  DATA.stores.forEach(s => { storeNames[normLabel(s.name)] = s.name; });
+  let nameCol = -1;
+  const nameLabels = ['점명', '점', '매장명', '매장', '점포명', '점포'];
+  for (let r = 0; r <= Math.min(amtRow + 2, rows.length - 1) && nameCol === -1; r++) {
+    const row = rows[r] || [];
+    for (let c = 0; c < row.length; c++) {
+      if (nameLabels.includes(normLabel(row[c]))) { nameCol = c; break; }
+    }
+  }
+  if (nameCol === -1) { // 이름표가 없으면 데이터에서 매장명이 가장 많이 나오는 열을 사용
+    const counts = {};
+    rows.forEach(row => (row || []).forEach((v, c) => { if (storeNames[normLabel(v)]) counts[c] = (counts[c] || 0) + 1; }));
+    const best = Object.entries(counts).sort((x, y) => y[1] - x[1])[0];
+    if (best) nameCol = Number(best[0]);
+  }
+  if (nameCol === -1) throw new Error('파일에서 매장명 열을 찾지 못했습니다.');
+
+  // ③ 등록된 매장명과 일치하는 행만 읽기 (소계·합계·머리글 행은 자동으로 제외됨)
+  const byStore = {};
+  for (let r = amtRow + 1; r < rows.length; r++) {
+    const row = rows[r] || [];
+    const key = storeNames[normLabel(row[nameCol])];
+    if (key && byStore[key] === undefined) byStore[key] = toNumber(row[amtCol]);
+  }
+
+  // 조회기간 (예: "기간 : 2026-09-01 ~ 2026-09-27")
+  let periodText = '';
+  for (let r = 0; r <= amtRow && !periodText; r++) {
+    (rows[r] || []).forEach(v => {
+      if (periodText) return;
+      const m = String(v ?? '').match(/(\d{4})[-./](\d{2})[-./](\d{2})\s*~\s*(\d{4})[-./](\d{2})[-./](\d{2})/);
+      if (m) periodText = `${m[1]}-${m[2]}-${m[3]} ~ ${m[4]}-${m[5]}-${m[6]}`;
+    });
+  }
+  return { byStore, periodText, detail: `"${amtLabel}" 열 자동 인식` };
+}
+async function handleConsolUpload(file) {
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, { type: 'array' });
+  const rows = sheetToRows(wb.Sheets[wb.SheetNames[0]]);
+  const { byStore, periodText, detail } = parseConsolRows(rows);
+  const n = Object.keys(byStore).length;
+  if (n === 0) throw new Error('파일에서 도구에 등록된 매장명과 일치하는 행을 찾지 못했습니다. (예: "FH 대구동성로중앙점")');
+  state.consol = { byStore, periodText, info: `${file.name} · ${detail} · ${n}개 매장${periodText ? ' · 기간 ' + periodText : ''}` };
+}
+function lastDailyDateStr() {
+  let max = null;
+  Object.values(state.daily).forEach(d => d.byDate.forEach(r => { if (!max || r.date > max) max = r.date; }));
+  if (!max) return null;
+  return `${max.getFullYear()}-${String(max.getMonth() + 1).padStart(2, '0')}-${String(max.getDate()).padStart(2, '0')}`;
+}
+
+function storeLastDateStr(name) {
+  const d = state.daily[name];
+  if (!d || !d.byDate.length) return null;
+  let max = d.byDate[0].date;
+  d.byDate.forEach(r => { if (r.date > max) max = r.date; });
+  return `${max.getFullYear()}-${String(max.getMonth() + 1).padStart(2, '0')}-${String(max.getDate()).padStart(2, '0')}`;
+}
+</script>
+<script>/* ============ 요약/위험매장 (잔여인시(월) 기준) ============ */
+function renderSummary() {
+  const totalTarget = DATA.stores.reduce((a, s) => a + (s.target || 0), 0);
+  const totalTarget85 = totalTarget * 0.85;
+
+  let rateCell, forecastCell, shortfallCell;
+  if (state.regionUploaded) {
+    const totalForecast = DATA.stores.reduce((a, s) => a + (computeLive(s).forecastClose || 0), 0);
+    const totalRate = totalTarget ? totalForecast / totalTarget : null;
+    const totalShortfall = totalForecast - totalTarget85;
+    rateCell = `<div class="value">${totalRate !== null ? (totalRate * 100).toFixed(1) + '%' : '-'}</div>`;
+    forecastCell = `<div class="value">${fmt(totalForecast)}원</div>`;
+    shortfallCell = `<div class="value ${totalShortfall >= 0 ? 'pos' : 'neg'}">${fmtSigned(totalShortfall, '원')}</div>`;
+  } else {
+    rateCell = `<div class="value muted-value">업로드 필요</div>`;
+    forecastCell = `<div class="value muted-value">업로드 필요</div>`;
+    shortfallCell = `<div class="value muted-value">업로드 필요</div>`;
+  }
+
+  document.getElementById('summary-grid').innerHTML = `
+    <div class="summary-card"><div class="label">지역 목표 합계</div><div class="value">${fmt(totalTarget)}원</div></div>
+    <div class="summary-card"><div class="label">지역 예상진도율</div>${rateCell}</div>
+    <div class="summary-card"><div class="label">지역 예상마감 합계</div>${forecastCell}</div>
+    <div class="summary-card"><div class="label">지역 85% 기준 매출금액</div><div class="value">${fmt(totalTarget85)}원</div></div>
+    <div class="summary-card"><div class="label">지역 85% 대비 과부족금액</div>${shortfallCell}</div>
+  `;
+}
+
+function renderRegionUpload() {
+  const st = document.getElementById('region-upload-status');
+  st.textContent = state.regionUploaded
+    ? '✓ ' + state.regionUploadInfo
+    : '전 매장 일자별 매출현황 파일을 올리면 지역 예상마감 합계가 계산됩니다';
+  st.classList.toggle('ok', state.regionUploaded);
+
+  const cs = document.getElementById('consol-upload-status');
+  cs.textContent = state.consol
+    ? '✓ ' + state.consol.info
+    : '몰입점의 재고통합 매출 반영용 (일자별 매출현황과 같은 기간으로 조회한 파일)';
+  cs.classList.toggle('ok', !!state.consol);
+
+  // 안내/경고 문구
+  const warns = [];
+  const mallCount = DATA.stores.filter(s => s.type === '몰입점').length;
+  if (state.regionUploaded && !state.consol) {
+    warns.push(`몰입점 ${mallCount}개점은 일자별 매출현황에 재고통합 매출이 빠져 있어 예상마감이 낮게 계산됩니다. 재고통합 매출 파일을 함께 올려주세요.`);
+  }
+  if (state.consol && state.regionUploaded && state.consol.periodText) {
+    const end = state.consol.periodText.split('~')[1].trim();
+    const last = lastDailyDateStr();
+    if (last && end !== last) {
+      warns.push(`기간이 서로 다릅니다: 일자별 매출현황은 ${last}까지, 재고통합 매출 파일은 ${end}까지입니다. 같은 기간으로 조회한 파일을 올려야 정확합니다.`);
+    }
+  }
+  const box = document.getElementById('consol-warning');
+  box.innerHTML = warns.map(w => `<div>⚠ ${w}</div>`).join('');
+  box.style.display = warns.length ? 'block' : 'none';
+}
+
+/* ============ 전체 매장 표 ============ */
+let sortKey = 'name', sortAsc = true, searchTerm = '';
+
+function renderTable() {
+  let results = DATA.stores.map(computeLive).filter(r =>
+    !searchTerm || r.store.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const getVal = (r, key) => {
+    if (key === 'name') return r.store.name;
+    if (key === 'target') return r.store.target;
+    if (EMP_TYPES.includes(key)) return state.overrides[r.store.name].headcount[key] || 0;
+    return r[key];
+  };
+  results = results.slice().sort((a, b) => {
+    const av = getVal(a, sortKey), bv = getVal(b, sortKey);
+    if (typeof av === 'string') return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+    return sortAsc ? (av - bv) : (bv - av);
+  });
+
+  document.getElementById('table-body').innerHTML = results.map(r => {
+    const s = r.store;
+    const hc = state.overrides[s.name].headcount;
+    return `
+    <tr data-store="${s.name}">
+      <td class="name-cell">${s.name}</td>
+      <td class="num" data-label="목표">${fmt(s.target)}원</td>
+      ${EMP_TYPES.map(t => `<td data-label="${t}"><input type="number" min="0" class="hc-input" data-emp="${t}" value="${hc[t] ?? 0}" /></td>`).join('')}
+      <td data-label="잔여인시(월)"><span class="chip ${signClass(r.remainBySales)}">${fmtSigned(r.remainBySales, 'h')}</span></td>
+      <td data-label="잔여인시(월평균)"><span class="chip ${signClass(r.remainByAvg)}">${fmtSigned(r.remainByAvg, 'h')}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.querySelectorAll('.hc-input').forEach(inp => {
+    inp.addEventListener('change', (e) => {
+      const storeName = e.target.closest('tr').dataset.store;
+      state.overrides[storeName].headcount[e.target.dataset.emp] = Number(e.target.value) || 0;
+      persistOverrides();
+      renderSummary(); renderTable(); renderStorePanel();
+    });
+  });
+
+  document.querySelectorAll('#main-table thead th[data-key]').forEach(th => {
+    const arrow = th.querySelector('.arrow');
+    if (arrow) arrow.remove();
+    if (th.dataset.key === sortKey) th.insertAdjacentHTML('beforeend', `<span class="arrow">${sortAsc ? '▲' : '▼'}</span>`);
+  });
+}
+
+/* ============ 개별 매장 확인 (목표대비 매출정보만) ============ */
+function renderStorePanel() {
+  const name = state.selectedStore || DATA.stores[0].name;
+  const store = DATA.stores.find(s => s.name === name);
+  const r = computeLive(store);
+  const optionsHtml = DATA.stores.map(s => `<option value="${s.name}" ${s.name === name ? 'selected' : ''}>${s.name}</option>`).join('');
+  const isMall = store.type === '몰입점';
+  const consolAmt = state.consolManual[name] !== undefined ? state.consolManual[name] : (state.consol ? state.consol.byStore[name] : undefined);
+  const warns = [];
+  if (isMall && r.hasDaily && consolAmt === undefined) {
+    warns.push('이 매장은 몰입점이라 일자별 매출에 재고통합이 빠져 있습니다. ② 재고통합 매출 파일을 올리거나 금액을 직접 입력해야 예상마감이 정확해집니다.');
+  }
+  if (isMall && state.consol && state.consol.periodText && r.hasDaily) {
+    const end = state.consol.periodText.split('~')[1].trim();
+    const last = storeLastDateStr(name);
+    if (last && end !== last) warns.push(`기간이 다릅니다: 일자별 매출현황은 ${last}까지, 재고통합 매출 파일은 ${end}까지입니다. 같은 기간으로 조회한 파일을 올려주세요.`);
+  }
+  if (isMall && state.consol && state.consolManual[name] === undefined && state.consol.byStore[name] === undefined) {
+    warns.push('올린 재고통합 매출 파일에서 이 매장 행을 찾지 못했습니다. 매장명이 같은지 확인하거나 금액을 직접 입력해 주세요.');
+  }
+  const warnHtml = warns.length ? `<div class="warn-box" style="margin-bottom:14px;">${warns.map(w => '⚠ ' + w).join('<br>')}</div>` : '';
+  const mallNames = DATA.stores.filter(s => s.type === '몰입점').map(s => s.name);
+  const streetNames = DATA.stores.filter(s => s.type === '가두점').map(s => s.name);
+  const guideHtml = `
+    <div class="guide-box">
+      <div class="guide-title">📌 내 매장은 어떤 파일을 올려야 하나요?</div>
+      <div class="guide-me ${isMall ? 'mall' : 'street'}">
+        <b>${name}</b>은(는) <b>${store.type}</b>입니다 →
+        ${isMall
+          ? '일자별 매출현황에 <b>재고통합 매출이 빠져 있습니다</b>. ① 일자별 매출현황 + ② 재고통합 매출(파일 또는 직접 입력) 두 가지가 필요합니다.'
+          : '일자별 매출현황에 <b>재고통합 매출이 이미 포함</b>되어 있습니다. ① 일자별 매출현황만 올리면 됩니다.'}
+      </div>
+      <details>
+        <summary>매장 유형 목록 보기 (가두점 ${streetNames.length}곳 / 몰입점 ${mallNames.length}곳)</summary>
+        <div class="guide-list"><b>가두점</b> (일자별 매출현황만): ${streetNames.join(', ')}</div>
+        <div class="guide-list"><b>몰입점</b> (일자별 매출현황 + 재고통합 매출): ${mallNames.join(', ')}</div>
+        <div class="guide-list muted">구분 방법: 일자별 매출현황의 매장 합계가 "매장매출(오프라인)"과 같으면 재고통합이 빠진 매장(몰입점)입니다.</div>
+        <div class="guide-list muted">재고통합 매출 파일: "재고통합매출" 열과 매장명이 있는 조회 결과(예: 판매속보(재고통합), 기간별 매출분석)를 <b>일자별 매출현황과 같은 기간</b>으로 조회해 올려주세요. 양식은 자동으로 인식하며, 파일이 없으면 금액을 직접 입력할 수 있습니다.</div>
+      </details>
+    </div>`;
+
+  document.getElementById('store-panel').innerHTML = `
+    <div class="store-head">
+      <select id="store-select">${optionsHtml}</select>
+      <span class="hint">${store.type}${store.type === '몰입점' ? ' · 일자별 매출에 재고통합이 빠져 있어 별도 반영 필요' : ' · 재고통합 포함 매출 기준'}</span>
+    </div>
+    ${guideHtml}
+    <div class="panel-grid">
+      <div class="panel-block">
+        <h3>① 일자별 매출현황 업로드</h3>
+        <input type="file" id="daily-file-input" accept=".xlsx,.xls" />
+        <div class="upload-status ${r.hasDaily ? 'ok' : 'idle'}" id="daily-status">${r.hasDaily ? '✓ ' + state.daily[name].sourceLabel : '업로드하면 예상마감이 실시간으로 계산됩니다'}</div>
+      </div>
+      <div class="panel-block">
+        <h3>② 재고통합 매출 ${isMall ? '<span class="need-tag">몰입점 필수</span>' : '<span class="opt-tag">가두점은 불필요</span>'}</h3>
+        <input type="file" id="panel-consol-input" accept=".xlsx,.xls" />
+        <div class="upload-status ${state.consol ? 'ok' : 'idle'}">${state.consol ? '✓ ' + state.consol.info : (isMall ? '재고통합 매출이 나오는 파일을 올려주세요 (양식은 자동 인식)' : '가두점은 일자별 매출에 재고통합이 이미 포함되어 있습니다')}</div>
+        ${isMall ? `<div class="manual-row"><label>파일이 없으면 직접 입력 (조회기간 누계, 원)</label><input type="number" min="0" id="consol-manual-input" placeholder="예: 5792700" value="${state.consolManual[name] !== undefined ? state.consolManual[name] : ''}" /></div>` : ''}
+      </div>
+    </div>
+    ${warnHtml}
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-label">예상 진도율</div><div class="kpi-value ${r.hasDaily ? '' : 'muted-value'}">${r.hasDaily && r.forecastRate !== null ? (r.forecastRate * 100).toFixed(1) + '%' : '업로드 필요'}</div></div>
+      <div class="kpi-card"><div class="kpi-label">예상마감금액</div><div class="kpi-value ${r.hasDaily ? '' : 'muted-value'}">${r.hasDaily ? fmt(r.forecastClose) + '원' : '업로드 필요'}</div></div>
+      <div class="kpi-card"><div class="kpi-label">85% 기준 매출금액</div><div class="kpi-value">${fmt(r.target85)}원</div></div>
+      <div class="kpi-card"><div class="kpi-label">재고통합 매출(누계)</div><div class="kpi-value ${consolAmt !== undefined ? '' : 'muted-value'}">${consolAmt !== undefined ? fmt(consolAmt) + '원' : (isMall ? '업로드 필요' : '일자별 매출에 포함')}</div>${consolAmt !== undefined && !isMall ? '<div class="hint">일자별 매출에 이미 포함(참고용)</div>' : ''}</div>
+      <div class="kpi-card"><div class="kpi-label">85% 대비 과부족금액</div><div class="kpi-value ${r.hasDaily ? '' : 'muted-value'}">${r.hasDaily ? `<span class="chip ${signClass(r.shortfall85)}">${fmtSigned(r.shortfall85, '원')}</span>` : '업로드 필요'}</div></div>
+    </div>
+    <div class="hint" style="margin-top:6px;">${r.hasDaily ? r.forecastSource : '이 매장의 일자별 매출현황을 업로드하거나(개별), 상단에서 전 매장 파일을 업로드하면(일괄) 실시간으로 계산됩니다.'}</div>
+  `;
+
+  document.getElementById('store-select').addEventListener('change', (e) => {
+    state.selectedStore = e.target.value; renderStorePanel();
+  });
+  const manualEl = document.getElementById('consol-manual-input');
+  if (manualEl) manualEl.addEventListener('change', (e) => {
+    const v = e.target.value.trim();
+    if (v === '') delete state.consolManual[name]; else state.consolManual[name] = Math.max(Number(v) || 0, 0);
+    renderAll();
+  });
+  document.getElementById('panel-consol-input').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      await handleConsolUpload(file);
+      renderAll();
+    } catch (err) {
+      alert('파일을 읽는 중 문제가 발생했습니다.\n' + err.message);
+    }
+  });
+  document.getElementById('daily-file-input').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      await handleDailyUpload(file, name);
+      renderSummary(); renderTable(); renderStorePanel();
+    } catch (err) {
+      alert('파일을 읽는 중 문제가 발생했습니다.\n' + err.message);
+    }
+  });
+}
+
+/* ============ 전체 렌더 / 초기화 ============ */
+function renderAll() {
+  renderSummary();
+  renderRegionUpload();
+  renderTable();
+  renderStorePanel();
+}
+
+function init() {
+  loadOverrides();
+  state.selectedStore = DATA.stores[0].name;
+
+  document.querySelectorAll('#main-table thead th[data-key]').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.key;
+      if (sortKey === key) sortAsc = !sortAsc; else { sortKey = key; sortAsc = key === 'name'; }
+      renderTable();
+    });
+  });
+  document.getElementById('search-input').addEventListener('input', (e) => { searchTerm = e.target.value; renderTable(); });
+
+  document.getElementById('consol-upload-input').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      await handleConsolUpload(file);
+      renderAll();
+    } catch (err) {
+      alert('파일을 읽는 중 문제가 발생했습니다.\n' + err.message);
+    }
+  });
+
+  document.getElementById('region-upload-input').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      await handleRegionDailyUpload(file);
+      renderAll();
+    } catch (err) {
+      alert('파일을 읽는 중 문제가 발생했습니다.\n' + err.message);
+    }
+  });
+
+  renderAll();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
