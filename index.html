@@ -301,7 +301,10 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     }
     const so = st => { const i = storeOrder.indexOf(st); return i < 0 ? 9999 : i; };
     const cmp = (a, b) => a < b ? -1 : a > b ? 1 : 0;
-    rows.sort((a, b) => so(a.store) - so(b.store) || cmp(a.brand, b.brand) || cmp(a.item, b.item) || cmp(a.style, b.style) || cmp(a.color, b.color));
+    // 정렬(매장 구분 없이 전체): 판매수량↓ → 재고합계↑ → 감가율↑ → 컬러 → 스타일 → 상품 → 브랜드 (판매 빈칸=0, 감가율 빈칸은 맨 뒤)
+    const rv = r => r.rate === '' ? Infinity : +r.rate;
+    rows.sort((a, b) => ((+b.qty || 0) - (+a.qty || 0)) || ((+a.total || 0) - (+b.total || 0)) || (rv(a) - rv(b))
+      || cmp(a.color, b.color) || cmp(a.style, b.style) || cmp(a.item, b.item) || cmp(a.brand, b.brand));
 
     const sizes = Array.from(sizeSet).filter(z => rows.some(r => r.sizes[z])).sort(sizeSort); // 남은 행에서 쓰는 사이즈만
     const has = { store: found.store.length > 0, wh: found.wh.length > 0, sales: found.sales.length > 0, size: found.size.length > 0, card: found.card.length > 0 };
