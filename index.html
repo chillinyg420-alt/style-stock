@@ -33,6 +33,7 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
 .rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;margin-top:10px}.rg label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700}
 .rg span{display:flex;align-items:center;gap:6px;color:var(--sub)}.rg input{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px}.rg input.set{border-color:var(--pri);background:#eef3ff}
 .foot{color:var(--sub);font-size:12px;text-align:center;margin-top:18px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.chips button{padding:6px 9px;font-size:12px;font-weight:600;background:var(--nobg);color:var(--ink);border:1px solid var(--line);border-radius:99px}.chips button.on{background:var(--pri);color:#fff;border-color:var(--pri)}#peerChips button.on{background:#7030A0;border-color:#7030A0}.chips button:disabled{opacity:.35;text-decoration:line-through}.mini{margin-top:8px;padding:5px 10px;font-size:12px;background:var(--nobg);color:var(--ink);border-radius:8px}.slot .t small{color:var(--sub);font-weight:400}
 .guide summary{font-weight:700;cursor:pointer}.guide h3{font-size:15px;margin:18px 0 6px}.gl{color:var(--ink);margin:6px 0 0;line-height:1.65;font-size:13.5px}.gb{border:1px solid var(--line);border-left:5px solid;border-radius:10px;padding:10px 12px;margin-top:8px}.gb p{margin:4px 0 0;line-height:1.55;font-size:13.5px}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}table.mx td,table.mx th{text-align:center;padding:6px 2px}table.mx td:first-child{text-align:left;white-space:nowrap}table.mx small{font-size:10.5px}.guide table.g td:first-child{white-space:nowrap}table.g small{color:var(--sub)}
 </style>
 </head>
@@ -82,9 +83,9 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
       <div class="gb" style="border-left-color:var(--pri)"><b><span class="dot" style="background:var(--pri)"></span>파란 버튼 · 엑셀 만들기</b>
         <p>"<b>우리 매장에 뭐가 몇 개 있고, 얼마나 팔렸지?</b>"<br>매장에 있는 상품마다 재고·판매·창고·가격을 한 줄씩 정리해 줘요.</p></div>
       <div class="gb" style="border-left-color:var(--ok)"><b><span class="dot" style="background:var(--ok)"></span>초록 버튼 · 타매장 판매 · 내 재고없음</b>
-        <p>"<b>다른 매장은 잘 파는데, 우리 매장엔 없는 상품이 뭐지?</b>"<br>다른 매장에서 팔렸는데 우리 매장 재고가 0개인 상품만 뽑아 줘요.</p></div>
+        <p>"<b>다른 매장은 잘 파는데, 우리 매장엔 없는 상품이 뭐지?</b>"<br>다른 매장에서 팔렸는데 우리 매장 재고가 0개인 상품만 뽑아 줘요. <b>상대매장에 몇 개 있는지</b>도 같이 보여 줘요.</p></div>
       <div class="gb" style="border-left-color:#7030A0"><b><span class="dot" style="background:#7030A0"></span>보라 버튼 · 상품 리스트 대조</b>
-        <p>"<b>이 목록에 있는 상품 중에 우리 매장에 없는 게 뭐지?</b>"<br>내가 가진 상품 목록(카테고리·브랜드·행사 등 아무거나)과 우리 매장 재고를 비교해서 없는 것만 뽑아 줘요.</p></div>
+        <p>"<b>이 목록에 있는 상품 중에 우리 매장에 없는 게 뭐지?</b>"<br>내가 가진 상품 목록(카테고리·브랜드·행사 등 아무거나)과 우리 매장 재고를 비교해서 없는 것만 뽑아 줘요. <b>상대매장 재고</b>도 같이 보여 줘요.</p></div>
 
       <h3>파일 6종류 — 각각 무슨 파일?</h3>
       <table class="g">
@@ -105,6 +106,12 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
         <tr><td><span class="dot" style="background:#7030A0"></span><b>보라</b></td><td>✅</td><td>➕</td><td>➕</td><td>–</td><td>–</td><td>✅</td><td>✅</td></tr>
       </table>
       <p class="gl"><b>✅ 꼭 필요</b> · <b>➕ 넣으면 더 좋아요</b> (없으면 그 칸만 비어요) · – 필요 없어요 · <b>△ 점재고를 ② 바코드 출력으로 넣었을 때만 필요</b><br>파일은 <b>한꺼번에 끌어다 놓아도 돼요.</b> 순서도 상관없고, 무슨 파일인지 도구가 알아서 알아봐요.</p>
+
+      <h3>📍 내 매장 · 🏬 상대매장 고르기</h3>
+      <p class="gl">· <b>📍 내 매장은 여러 곳</b>을 눌러 고를 수 있어요. 여러 곳이면 <b>매장별로 따로</b> 뽑고, 엑셀 맨 앞 "내 매장" 칸에 매장 이름이 들어가요. (바코드 출력 파일은 1곳만)<br>
+        · <b>🏬 상대매장</b>을 고르면 그 매장들의 재고가 <b>매장별 칸 + 합계</b>로 나와요. <b>안 고르면 내 매장을 뺀 전 매장</b>이 나와요.<br>
+        · 상대매장 재고는 <b>전 매장이 들어 있는 점재고 ①</b>(스타일별 입출고실적조회)을 넣어야 나와요.<br>
+        · 지역 <b>전 매장 재고·판매를 한 번에</b> 보려면: 전 매장 점재고 ① + 판매현황을 넣고 🔵 파란 버튼.</p>
 
       <h3>보라 버튼 결과의 등급 보는 법</h3>
       <table class="g">
@@ -262,7 +269,8 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
 
   // files: [{name, rows}] (rows = sheet_to_json header:1)
   // filt: { rate:[min,max], qty:[min,max], stock:[min,max] } — null/'' = 제한 없음. 모두 만족(AND)하는 행만 출력
-  function build(files, filt, overrideMyStore) {
+  function build(files, filt, overrideMyStore, opts) {
+    opts = opts || {};
     const found = { store: [], barcode: [], wh: [], sales: [], size: [], card: [], catalog: [] };
     const unknown = [];
     for (const f of files) {
@@ -444,43 +452,43 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
         }
         return '';
       })() : '');
-    if (has.sales && effectiveMyStore) {
-      // 판매현황에서 내 매장이 아닌 타매장 판매 집계 (스타일|컬러 단위)
-      const otherSales = {}; // K(style,color) → {qty, stores:Set}
-      for (const [k, qty] of Object.entries(sales)) {
-        const { store, style, color } = salesKeys[k] || {};
-        if (!store || !style) continue;
-        // 내 매장 제외
-        if (norm(store) === norm(effectiveMyStore)) continue;
-        if (qty <= 0) continue;
-        const ik = K(style, color);
-        if (!otherSales[ik]) otherSales[ik] = { qty: 0, styles: new Set() };
-        otherSales[ik].qty += qty;
-        otherSales[ik].styles.add(style);
-      }
-      // 내 매장 재고 조회
-      for (const [ik, os] of Object.entries(otherSales)) {
-        const [stylePart, colorPart] = ik.split('\u0001');
-        const myKey = K(effectiveMyStore, stylePart, colorPart);
-        const myStock = stock[myKey];
-        if (!myStock || myStock.total === 0) {
-          // 내 매장에 재고 없음 → 대상
-          const inf = info[ik] || {};
-          const c = card[ik];
+    // 내 매장 목록(복수) · 상대매장 목록
+    const myList = (opts.myStores && opts.myStores.length ? opts.myStores : (effectiveMyStore ? [effectiveMyStore] : [])).map(s);
+    const myN = new Set(myList.map(norm));
+    const stockStores = storeOrder.slice();
+    // 상대매장: 지정하면 그 매장들, 비우면 '내 매장 뺀 전 매장'(점재고에 있는 매장)
+    const peers = (opts.peers && opts.peers.length ? opts.peers.map(s) : stockStores.filter(x => !myN.has(norm(x))).sort((a, b) => a.localeCompare(b)));
+    const peerOn = has.store && peers.length > 0;   // 상대 재고는 전 매장 점재고(①)가 있어야 계산
+    const stTot = (store, ik) => { const v = stock[norm(store) + '\u0001' + ik]; return v ? v.total : 0; };
+    const peerOf = (M, ik) => { const o = {}; let sum = 0; for (const p of peers) { if (norm(p) === norm(M)) { o[p] = ''; continue; } const q = stTot(p, ik); o[p] = q; sum += q; } return { o, sum }; };
+
+    if (has.sales && myList.length) {
+      for (const M of myList) {
+        const otherSales = {};
+        for (const [k, qty] of Object.entries(sales)) {
+          const { store, style, color } = salesKeys[k] || {};
+          if (!store || !style || norm(store) === norm(M) || !(qty > 0)) continue;
+          const ik = K(style, color);
+          otherSales[ik] = (otherSales[ik] || 0) + qty;
+        }
+        for (const [ik, q] of Object.entries(otherSales)) {
+          if (stTot(M, ik) > 0) continue;
+          const [stylePart, colorPart] = ik.split('\u0001');
+          const inf = info[ik] || {}, c = card[ik], pr = peerOn ? peerOf(M, ik) : { o: {}, sum: '' };
           zeroStockRows.push({
-            store: effectiveMyStore,
-            year: '', month: '', mid: inf.mid || '', small: inf.small || '',
+            store: M, year: '', month: '', mid: inf.mid || '', small: inf.small || '',
             brand: inf.brand || '', item: inf.item || '',
-            style: stylePart, color: colorPart,
+            style: inf.style || stylePart, color: inf.color || colorPart,
             list: c ? c.list : '', sale: c ? c.sale : '', rate: c ? c.rate : '',
-            qty: os.qty, wh: ik in wh ? wh[ik] : '', total: 0, sizes: {},
-            _otherSalesQty: os.qty,
+            qty: q, wh: ik in wh ? wh[ik] : '', total: 0, sizes: {},
+            _otherSalesQty: q, peer: pr.o, peerSum: pr.sum,
           });
         }
       }
-      // 정렬: 타매장 판매수량↓ → 창고↓ → 스타일→컬러
-      zeroStockRows.sort((a, b) =>
+      const mo = x => myList.indexOf(x);
+      zeroStockRows.sort((a, b) => mo(a.store) - mo(b.store) ||
         ((+b._otherSalesQty || 0) - (+a._otherSalesQty || 0)) ||
+        ((+b.peerSum || 0) - (+a.peerSum || 0)) ||
         ((+b.wh || 0) - (+a.wh || 0)) ||
         cmp(a.style, b.style) || cmp(a.color, b.color));
     }
@@ -510,55 +518,63 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     // 2단 판정: 스타일 미보유(확실) / 칼라 결손(스타일은 있으나 그 칼라 없음 — 칼라명 절삭 차이로 오탐 가능)
     // 칼라 비교: 공백·하이픈·슬래시 제거 후 짧은 쪽 길이만큼 앞부분 일치(3자 미만은 완전일치) → 양쪽 절삭 대응
     let gap = null;
-    if (found.catalog.length && effectiveMyStore) {
+    if (found.catalog.length && myList.length) {
       const nc = v => { const x = norm(v).replace(/[\s\-\/]/g, ''); return /^\d+$/.test(x) ? String(+x) : x; };
       const cm = (a, b) => { const m = Math.min(a.length, b.length); return m < 3 ? a === b : a.slice(0, m) === b.slice(0, m); };
-      const held = {};   // 스타일 → [칼라] (재고 > 0)
-      const addHeld = (st, co) => { const k = norm(st); if (k) (held[k] || (held[k] = [])).push(nc(co)); };
-      for (const v of Object.values(stock)) if (norm(v.store) === norm(effectiveMyStore) && v.total > 0) addHeld(v.style, v.color);
-      if (found.store.length === 0) for (const f of found.barcode) {   // 바코드: 자사스타일 외 ERP 스타일 열도 보유로 인정(ASICS 등)
-        const I = f.idx; if (I['스타일'] === undefined) continue;
-        for (let i = f.h + 1; i < f.rows.length; i++) { const r = f.rows[i]; if (r && n(r[I['인쇄매수']]) > 0) addHeld(r[I['스타일']], r[I['컬러']]); }
-      }
       const byStyle = (obj) => { const o = {}; for (const [k, q] of Object.entries(obj)) { if (!(q > 0)) continue; const [st, co] = k.split('\u0001'); (o[st] || (o[st] = [])).push([nc(co), q]); } return o; };
-      const whBy = byStyle(wh);
-      const os = {};
-      for (const [k, q] of Object.entries(sales)) { const x = salesKeys[k]; if (!x || norm(x.store) === norm(effectiveMyStore) || !(q > 0)) continue; const ik = K(x.style, x.color); os[ik] = (os[ik] || 0) + q; }
-      const osBy = byStyle(os);
       const sumM = (list, c) => (list || []).reduce((t, [cc, q]) => t + (!c || cm(cc, c) ? q : 0), 0);
-      const rows = [], seen = new Set(); let total = 0, heldCnt = 0;
-      for (const f of found.catalog) {
-        const c = f.cols, g = (r, k) => c[k] !== undefined ? r[c[k]] : '';
-        const hdr = new Set((f.rows[f.h] || []).map(hn));
-        for (let i = c.start; i < f.rows.length; i++) {
-          const r = f.rows[i]; if (!r) continue;
-          const st = s(g(r, 'style')); if (!st || hdr.has(hn(st)) || /합계|소계|TOTAL/i.test(st)) continue;
-          const st2 = s(g(r, 'style2'));
-          const co = s(g(r, 'color'));
-          // 내 매장 재고에 있는 스타일 키 (스타일 열이 2개면 둘 중 맞는 쪽)
-          const ks = !held[norm(st)] && st2 && held[norm(st2)] ? norm(st2) : norm(st);
-          const kc = nc(co);
-          if (seen.has(ks + '|' + kc)) continue; seen.add(ks + '|' + kc); total++;
-          const h = held[ks]; let verdict;
-          if (!h || !h.length) verdict = '스타일 미보유';
-          else if (!kc || h.some(x => cm(x, kc))) { heldCnt++; continue; }   // 칼라 열이 없으면 스타일 단위로 판정
-          else verdict = '칼라 결손';
-          const wk = whBy[ks] ? ks : (st2 ? norm(st2) : ks), okk = osBy[ks] ? ks : (st2 ? norm(st2) : ks);
-          const w = sumM(whBy[wk], kc), o = sumM(osBy[okk], kc);
-          const inf = info[K(st, co)] || (st2 ? info[K(st2, co)] : null) || {};   // 리스트에 없는 열은 ARS 파일 정보로 보충
-          rows.push({ grade: w > 0 && o > 0 ? 'S' : w > 0 ? 'A' : o > 0 ? 'B' : 'C', verdict,
-            brand: s(g(r, 'brand')) || inf.brand || '', item: s(g(r, 'item')) || inf.item || '', style: st, color: co,
-            price: n(g(r, 'price')) || '', big: s(g(r, 'big')), mid: s(g(r, 'mid')) || inf.mid || '', small: s(g(r, 'small')) || inf.small || '',
-            wh: has.wh ? w : '', other: has.sales ? o : '' });
+      const whBy = byStyle(wh);
+      // 매장별 재고 (스타일 → [칼라, 수량])
+      const stBy = {};
+      for (const v of Object.values(stock)) { if (!(v.total > 0)) continue; const sk = norm(v.store), k = norm(v.style); const o = stBy[sk] || (stBy[sk] = {}); (o[k] || (o[k] = [])).push([nc(v.color), v.total]); }
+      const rows = []; let total = 0, heldCnt = 0;
+      for (const M of myList) {
+        const held = {};
+        const addHeld = (st, co) => { const k = norm(st); if (k) (held[k] || (held[k] = [])).push(nc(co)); };
+        for (const v of Object.values(stock)) if (norm(v.store) === norm(M) && v.total > 0) addHeld(v.style, v.color);
+        if (found.store.length === 0) for (const f of found.barcode) {   // 바코드: 자사스타일 외 ERP 스타일 열도 보유로 인정(ASICS 등)
+          const I = f.idx; if (I['스타일'] === undefined) continue;
+          for (let i = f.h + 1; i < f.rows.length; i++) { const r = f.rows[i]; if (r && n(r[I['인쇄매수']]) > 0) addHeld(r[I['스타일']], r[I['컬러']]); }
         }
+        const os = {};
+        for (const [k, q] of Object.entries(sales)) { const x = salesKeys[k]; if (!x || norm(x.store) === norm(M) || !(q > 0)) continue; const ik = K(x.style, x.color); os[ik] = (os[ik] || 0) + q; }
+        const osBy = byStyle(os);
+        const seen = new Set(); let tM = 0;
+        for (const f of found.catalog) {
+          const c = f.cols, g = (r, k) => c[k] !== undefined ? r[c[k]] : '';
+          const hdr = new Set((f.rows[f.h] || []).map(hn));
+          for (let i = c.start; i < f.rows.length; i++) {
+            const r = f.rows[i]; if (!r) continue;
+            const st = s(g(r, 'style')); if (!st || hdr.has(hn(st)) || /합계|소계|TOTAL/i.test(st)) continue;
+            const st2 = s(g(r, 'style2'));
+            const co = s(g(r, 'color'));
+            const ks = !held[norm(st)] && st2 && held[norm(st2)] ? norm(st2) : norm(st);
+            const kc = nc(co);
+            if (seen.has(ks + '|' + kc)) continue; seen.add(ks + '|' + kc); tM++;
+            const h = held[ks]; let verdict;
+            if (!h || !h.length) verdict = '스타일 미보유';
+            else if (!kc || h.some(x => cm(x, kc))) { heldCnt++; continue; }
+            else verdict = '칼라 결손';
+            const alt = st2 ? norm(st2) : ks;
+            const w = sumM(whBy[ks] || whBy[alt], kc), o = sumM(osBy[ks] || osBy[alt], kc);
+            let peer = {}, peerSum = '';
+            if (peerOn) { peerSum = 0; for (const p of peers) { if (norm(p) === norm(M)) { peer[p] = ''; continue; } const m = stBy[norm(p)] || {}; const q = sumM(m[ks] || m[alt], kc); peer[p] = q; peerSum += q; } }
+            const inf = info[K(st, co)] || (st2 ? info[K(st2, co)] : null) || {};
+            rows.push({ store: M, grade: w > 0 && o > 0 ? 'S' : w > 0 ? 'A' : o > 0 ? 'B' : 'C', verdict,
+              brand: s(g(r, 'brand')) || inf.brand || '', item: s(g(r, 'item')) || inf.item || '', style: st, color: co,
+              price: n(g(r, 'price')) || '', big: s(g(r, 'big')), mid: s(g(r, 'mid')) || inf.mid || '', small: s(g(r, 'small')) || inf.small || '',
+              wh: has.wh ? w : '', other: has.sales ? o : '', peer, peerSum });
+          }
+        }
+        total = Math.max(total, tM);
       }
-      const GO = { S: 0, A: 1, B: 2, C: 3 };
-      rows.sort((a, b) => GO[a.grade] - GO[b.grade] || (a.verdict === b.verdict ? 0 : a.verdict === '스타일 미보유' ? -1 : 1)
-        || (+b.other || 0) - (+a.other || 0) || (+b.wh || 0) - (+a.wh || 0) || a.brand.localeCompare(b.brand) || a.style.localeCompare(b.style));
-      gap = { rows, total, heldCnt, store: effectiveMyStore };
+      const GO = { S: 0, A: 1, B: 2, C: 3 }, mo = x => myList.indexOf(x);
+      rows.sort((a, b) => mo(a.store) - mo(b.store) || GO[a.grade] - GO[b.grade] || (a.verdict === b.verdict ? 0 : a.verdict === '스타일 미보유' ? -1 : 1)
+        || (+b.other || 0) - (+a.other || 0) || (+b.peerSum || 0) - (+a.peerSum || 0) || (+b.wh || 0) - (+a.wh || 0) || a.brand.localeCompare(b.brand) || a.style.localeCompare(b.style));
+      gap = { rows, total, heldCnt, store: myList.join(', '), stores: myList };
     }
 
-    return { head, aoa, sizes, found, unknown, has, stats: st, salesPeriod, sizeStores, cardStore, showCard, myStore: effectiveMyStore, zeroStockRows, gap };
+    return { head, aoa, sizes, found, unknown, has, stats: st, salesPeriod, sizeStores, cardStore, showCard, myStore: effectiveMyStore, myList, peers: peerOn ? peers : [], zeroStockRows, gap };
   }
 
   // 결과 시트(양식: A열 비움, 1행 합계, 2행 헤더)
@@ -667,44 +683,74 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   }
 
   // 카탈로그 대조 결과 엑셀 (한 장 · 등급 열 · 자동필터 · 1행 고정)
-  function toGapFile(XLSX, gap, hasWh, hasSales) {
-    const head = ['등급', '판정', '브랜드', '상품명', '스타일', '칼라', '소비자가', '대분류', '중분류', '소분류', '창고재고', '타매장판매'];
-    const aoa = [head].concat(gap.rows.map(x => [x.grade, x.verdict, x.brand, x.item, x.style, x.color, x.price, x.big, x.mid, x.small,
-      hasWh ? x.wh : '미첨부', hasSales ? x.other : '미첨부']));
-    const ws = XLSX.utils.aoa_to_sheet(aoa);
+  // 표 한 장 엑셀 (1행 제목·자동필터·틀 고정) — kinds: 열 종류별 색/서식
+  function toTable(XLSX, head, kinds, aoa, sheet, freeze, rowStyle) {
+    const ws = XLSX.utils.aoa_to_sheet([head].concat(aoa));
     const ln = { style: 'thin', color: { rgb: 'BFBFBF' } }, border = { top: ln, bottom: ln, left: ln, right: ln };
     const st = (bg, fg, bold, center, fmt) => Object.assign({ font: { name: 'Noto Sans KR', sz: 10, bold: !!bold, color: { rgb: fg || '000000' } },
-      fill: { patternType: 'solid', fgColor: { rgb: bg } }, border, alignment: { vertical: 'center', horizontal: center ? 'center' : undefined } }, fmt ? { numFmt: fmt } : {});
-    const HB = ['C00000', '595959', '1F4E79', '1F4E79', '1F4E79', '1F4E79', '44546A', '1F4E79', '1F4E79', '1F4E79', '806000', '548235'];
+      fill: { patternType: 'solid', fgColor: { rgb: bg } }, border, alignment: { vertical: 'center', horizontal: center ? 'center' : undefined, wrapText: false } }, fmt ? { numFmt: fmt } : {});
+    const HB = { grade: 'C00000', verdict: '595959', store: '203864', text: '1F4E79', ctext: '1F4E79', price: '44546A', wh: '806000', sales: '548235', psum: '7030A0', peer: '8E7CC3' };
+    const CB = { wh: 'FFF2CC', sales: 'E2F0D9', psum: 'E4DFEC', peer: 'F7F5FA', store: 'DDEBF7' };
     const GC = { S: ['C00000', 'FFFFFF'], A: ['F4B183', '000000'], B: ['FFE699', '000000'], C: ['EDEDED', '7F7F7F'] };
-    head.forEach((h, c) => { ws[XLSX.utils.encode_cell({ r: 0, c })].s = st(HB[c], 'FFFFFF', true, true); });
-    gap.rows.forEach((x, i) => {
+    head.forEach((h, c) => { ws[XLSX.utils.encode_cell({ r: 0, c })].s = st(HB[kinds[c]] || '1F4E79', 'FFFFFF', true, true); });
+    aoa.forEach((row, i) => {
       const r = i + 1;
-      head.forEach((h, c) => {
+      kinds.forEach((k, c) => {
         const a = XLSX.utils.encode_cell({ r, c }); if (!ws[a]) ws[a] = { t: 's', v: '' };
-        if (c === 0) ws[a].s = st(GC[x.grade][0], GC[x.grade][1], true, true);
-        else if (c === 1) ws[a].s = st(x.verdict === '스타일 미보유' ? 'FCE4D6' : 'FFFFFF', '000000', x.verdict === '스타일 미보유', true);
-        else if (c === 6) ws[a].s = st('FFFFFF', '000000', false, false, '#,##0');
-        else if (c >= 10) ws[a].s = st(c === 10 ? 'FFF2CC' : 'E2F0D9', '000000', true, true, '#,##0');
-        else ws[a].s = st('FFFFFF', '000000', false, c === 7 || c === 8);
+        const v = row[c];
+        if (k === 'grade') ws[a].s = st(GC[v] ? GC[v][0] : 'FFFFFF', GC[v] ? GC[v][1] : '000000', true, true);
+        else if (k === 'verdict') ws[a].s = st(v === '스타일 미보유' ? 'FCE4D6' : 'FFFFFF', '000000', v === '스타일 미보유', true);
+        else if (k === 'store') ws[a].s = st(CB.store, '000000', true, false);
+        else if (k === 'price') ws[a].s = st('FFFFFF', '000000', false, false, '#,##0');
+        else if (k === 'rate') ws[a].s = st('FFFFFF', '000000', false, true, '0%');
+        else if (k === 'peer') ws[a].s = st(+v > 0 ? 'D9D2E9' : CB.peer, +v > 0 ? '000000' : 'A6A6A6', +v > 0, true, '#,##0');
+        else if (CB[k]) ws[a].s = st(CB[k], '000000', true, true, '#,##0');
+        else ws[a].s = st('FFFFFF', '000000', false, k === 'ctext');
       });
     });
-    ws['!cols'] = [6, 13, 14, 30, 15, 26, 10, 7, 18, 14, 9, 10].map(w => ({ wch: w }));
-    ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: gap.rows.length, c: head.length - 1 } }) };
+    const W = { grade: 6, verdict: 13, store: 20, price: 10, rate: 7, wh: 9, sales: 10, psum: 10, peer: 9, ctext: 9 };
+    ws['!cols'] = head.map((h, c) => ({ wch: kinds[c] === 'text' ? Math.min(30, Math.max(8, String(h).length * 2 + 2, ...aoa.slice(0, 300).map(r => String(r[c] == null ? '' : r[c]).length + 2))) : (W[kinds[c]] || 10) }));
+    ws['!rows'] = [{ hpt: 30 }];
+    ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: aoa.length, c: head.length - 1 } }) };
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, '미보유상품');
+    XLSX.utils.book_append_sheet(wb, ws, sheet);
     const buf = XLSX.write(wb, { type: 'array', bookType: 'xlsx', compression: true });
     const cfb = XLSX.CFB.read(new Uint8Array(buf), { type: 'array' });
     const ent = XLSX.CFB.find(cfb, '/xl/worksheets/sheet1.xml');
     let xml = new TextDecoder().decode(ent.content);
-    const pane = '<sheetView workbookViewId="0"><pane xSplit="2" ySplit="1" topLeftCell="C2" activePane="bottomRight" state="frozen"/><selection pane="bottomRight" activeCell="C2" sqref="C2"/></sheetView>';
+    const tl = XLSX.utils.encode_cell({ r: 1, c: freeze });
+    const pane = `<sheetView workbookViewId="0"><pane xSplit="${freeze}" ySplit="1" topLeftCell="${tl}" activePane="bottomRight" state="frozen"/><selection pane="bottomRight" activeCell="${tl}" sqref="${tl}"/></sheetView>`;
     xml = xml.replace(/<sheetView [^>]*\/>|<sheetView [^>]*>[\s\S]*?<\/sheetView>/, pane);
     if (xml.indexOf('<pane ') < 0) xml = xml.replace('<sheetData', '<sheetViews>' + pane + '</sheetViews><sheetData');
     ent.content = new TextEncoder().encode(xml);
     return XLSX.CFB.write(cfb, { fileType: 'zip', compression: true, type: 'array' });
   }
+  const peerHead = p => p.replace(/^([A-Z]{2}\s+)대구/, '$1');   // 'ST 대구성서점' → 'ST 성서점'(짧게, 브랜드 구분 유지)
 
-  root.StyleStock = { fixRange, detect, build, toSheet, toFile, toGapFile, TYPES };
+  // 초록 버튼: 타매장 판매 · 내 재고없음 (내 매장 복수 · 상대매장 재고)
+  function toZeroFile(XLSX, res) {
+    const rows = res.zeroStockRows, P = res.peers || [], C = res.showCard;
+    const head = ['내 매장', '중분류', '소분류', '브랜드', '상품', '스타일', '컬러'].concat(C ? ['정상가', '판매가', '감가율'] : [])
+      .concat(['타매장판매', '창고'], P.length ? ['상대재고 합계'].concat(P.map(peerHead)) : []);
+    const kinds = ['store', 'ctext', 'text', 'text', 'text', 'text', 'text'].concat(C ? ['price', 'price', 'rate'] : [])
+      .concat(['sales', 'wh'], P.length ? ['psum'].concat(P.map(() => 'peer')) : []);
+    const aoa = rows.map(x => [x.store, x.mid, x.small, x.brand, x.item, x.style, x.color].concat(C ? [x.list, x.sale, x.rate] : [])
+      .concat([x.qty, x.wh === '' ? (res.has.wh ? 0 : '') : x.wh], P.length ? [x.peerSum].concat(P.map(p => x.peer[p])) : []));
+    return toTable(XLSX, head, kinds, aoa, '타매장판매_내재고없음', 7);
+  }
+  // 보라 버튼: 상품 리스트 대조 (내 매장 복수 · 상대매장 재고)
+  function toGapFile(XLSX, gap, hasWh, hasSales, peers) {
+    const P = peers || [];
+    const head = ['내 매장', '등급', '판정', '브랜드', '상품명', '스타일', '칼라', '소비자가', '대분류', '중분류', '소분류', '창고재고', '타매장판매']
+      .concat(P.length ? ['상대재고 합계'].concat(P.map(peerHead)) : []);
+    const kinds = ['store', 'grade', 'verdict', 'text', 'text', 'text', 'text', 'price', 'ctext', 'text', 'text', 'wh', 'sales']
+      .concat(P.length ? ['psum'].concat(P.map(() => 'peer')) : []);
+    const aoa = gap.rows.map(x => [x.store, x.grade, x.verdict, x.brand, x.item, x.style, x.color, x.price, x.big, x.mid, x.small,
+      hasWh ? x.wh : '미첨부', hasSales ? x.other : '미첨부'].concat(P.length ? [x.peerSum].concat(P.map(p => x.peer[p])) : []));
+    return toTable(XLSX, head, kinds, aoa, '미보유상품', 3);
+  }
+
+  root.StyleStock = { fixRange, detect, build, toSheet, toFile, toGapFile, toZeroFile, TYPES };
   if (typeof module !== 'undefined') module.exports = root.StyleStock;
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
@@ -720,8 +766,10 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   let files=[]; // {name, rows, type}
   const $=id=>document.getElementById(id);
   function hasStockFile(){return files.some(f=>f.type==='store'||f.type==='barcode');}
-  let selStore='';
-  function getMyStore(){return needStore()?selStore:'';}
+  let selMy=[], selPeer=[];
+  const barcodeOnly=()=>hasT('barcode')&&!hasT('store');
+  function getMyStore(){return needStore()&&selMy.length?selMy[0]:'';}
+  function chips(id,list,sel,dis){return `<div class="chips" id="${id}">${list.map(s=>`<button type="button" data-s="${esc(s)}" class="${sel.includes(s)?'on':''}"${dis.includes(s)?' disabled':''}>${esc(s)}</button>`).join('')}</div>`;}
   const hasT=t=>files.some(f=>f.type===t);
   function needStore(){return hasStockFile();}
   function draw(){
@@ -733,12 +781,16 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       if(k==='barcode'&&by.store.length>0) return `<div class="slot"><div class="t">${T[k].label}<span class="bd no">대기</span></div><div class="d" style="color:var(--warn)">스타일별입출고실적조회(점) 파일이 있어 바코드 파일은 무시됩니다</div></div>`;
       return `<div class="slot"><div class="t">${T[k].label}<span class="bd ${n?'ok':'no'}">${n?'✓ '+n+'개':'미첨부'}</span></div><div class="d">${(k==='store'||k==='barcode')&&!n?(hasStockFile()?'다른 점재고 파일 사용 중 — 없어도 됨':'①② 중 하나는 꼭 넣어 주세요'):(n?'→ ':'없으면 비움: ')+SLOT_DESC[k]}</div>${n?`<div class="f">${by[k].map(esc).join('<br>')}</div>`:''}</div>`;
     }).join('')
-      +(needStore()?`<div class="slot" style="border-color:var(--pri)"><div class="t">📍 내 매장 선택<span class="bd ${selStore?'ok':'warn'}">${selStore?'✓ 선택됨':'선택'}</span></div><div class="d">우리 매장을 골라 주세요 (파란 버튼은 바코드 출력 파일일 때만 필요)</div><select id="myStoreSel" style="margin-top:6px;padding:6px 8px;border-radius:6px;border:1px solid var(--line);font:inherit;width:100%"><option value="">— 내 매장 선택 —</option>${STORE_LIST.map(s=>`<option${s===selStore?' selected':''}>${esc(s)}</option>`).join('')}</select></div>`:'')
+      +(needStore()?`<div class="slot" style="border-color:var(--pri)"><div class="t">📍 내 매장 <small>(여러 개 가능)</small><span class="bd ${selMy.length?'ok':'warn'}">${selMy.length?'✓ '+selMy.length+'곳':'선택'}</span></div><div class="d">${barcodeOnly()?'바코드 출력은 한 매장 파일이라 <b>1곳만</b> 고를 수 있어요':'여러 곳을 고르면 매장별로 따로 뽑고 "내 매장" 칸에 매장명이 들어가요'}</div>${chips('myChips',STORE_LIST,selMy,[])}</div>`
+        +(hasT('store')?`<div class="slot" style="border-color:#7030A0"><div class="t">🏬 상대매장 <small>(여러 개 가능)</small><span class="bd ${selPeer.length?'ok':'no'}">${selPeer.length?'✓ '+selPeer.length+'곳':'전 매장'}</span></div><div class="d">초록·보라 결과에 상대매장 재고를 매장별 칸 + 합계로 보여 줘요. <b>안 고르면 내 매장 뺀 전 매장</b>이에요.</div>${chips('peerChips',STORE_LIST,selPeer,selMy)}${selPeer.length?'<button type="button" class="mini" id="peerAll">전 매장으로 되돌리기</button>':''}</div>`:''):'')
       +(unk.length?`<div class="slot"><div class="t">인식 못한 파일<span class="bd warn">${unk.length}개</span></div><div class="d">${unk.map(esc).join('<br>')}</div></div>`:'');
     const ok=hasStockFile();
     $('go').disabled=!ok; $('go2').disabled=!ok; $('go3').disabled=!(ok&&hasT('catalog'));
-    const sel=$('myStoreSel');
-    if(sel) sel.onchange=()=>{selStore=sel.value;draw();};
+    document.querySelectorAll('#myChips button').forEach(b=>b.onclick=()=>{const s=b.dataset.s;
+      if(barcodeOnly()) selMy=selMy.includes(s)?[]:[s]; else selMy=selMy.includes(s)?selMy.filter(x=>x!==s):selMy.concat(s);
+      selPeer=selPeer.filter(x=>!selMy.includes(x)); draw();});
+    document.querySelectorAll('#peerChips button').forEach(b=>b.onclick=()=>{const s=b.dataset.s;selPeer=selPeer.includes(s)?selPeer.filter(x=>x!==s):selPeer.concat(s);draw();});
+    if($('peerAll')) $('peerAll').onclick=()=>{selPeer=[];draw();};
   }
   const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
   const wait=()=>new Promise(r=>setTimeout(r,30));
@@ -766,7 +818,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   ['dragenter','dragover'].forEach(ev=>dr.addEventListener(ev,e=>{e.preventDefault();dr.classList.add('over')}));
   ['dragleave','drop'].forEach(ev=>dr.addEventListener(ev,e=>{e.preventDefault();dr.classList.remove('over')}));
   dr.addEventListener('drop',e=>add(e.dataTransfer.files));
-  $('clr').onclick=()=>{files=[];selStore='';draw();$('res').hidden=true;$('st').textContent='';};
+  $('clr').onclick=()=>{files=[];selMy=[];selPeer=[];draw();$('res').hidden=true;$('st').textContent='';};
   function kstStamp(){const d=new Date(Date.now()+9*3600e3);return d.toISOString().slice(2,10).replace(/-/g,'');}
   // 출력 범위
   const P={all:{},dead:{qty1:0,stock0:5},hi:{rate0:50},hiDead:{rate0:50,qty1:0},full:{rate0:0,rate1:0},best:{qty0:2},low:{stock0:1,stock1:2}};
@@ -813,38 +865,30 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     $('res').hidden=false; $('st').textContent='✅ 다운로드 완료: '+fn;
   };
 
-  // 타매장 판매 있고 내 매장 재고 없음 다운로드
+  // 타매장 판매 있고 내 매장 재고 없음 다운로드 (내 매장 복수 · 상대매장 재고)
+  const myTag=()=>selMy.length===1?selMy[0]:selMy.length+'개점';
+  const dl=(bytes,fn)=>{const u=URL.createObjectURL(new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));const a=document.createElement('a');a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000);};
+  const peerNote=r=>r.peers.length?`상대매장 재고: ${selPeer.length?r.peers.length+'곳 선택':'내 매장 뺀 전 매장 '+r.peers.length+'곳'} — 매장별 칸 + 합계`:(hasT('store')?'':'상대매장 재고는 전 매장 점재고 ①(스타일별 입출고실적조회)을 넣어야 나와요.');
   $('go2').onclick=async()=>{
-    if(!hasStockFile()){$('st').textContent='⚠️ 점재고 또는 바코드 출력 파일이 필요합니다.';return;}
-    // 바코드 파일 사용 시 매장 선택 필수 체크
-    const hasBarcodeOnly=files.some(f=>f.type==='barcode')&&!files.some(f=>f.type==='store');
-    if(hasBarcodeOnly&&!getMyStore()){$('st').textContent='⚠️ 내 매장을 선택해 주세요 (📍 내 매장 선택 칸).';return;}
+    if(!hasStockFile()){$('st').textContent='⚠️ 점재고 파일이 필요합니다.';return;}
+    if(!hasT('sales')){$('st').textContent='⚠️ 판매현황 파일이 없어 타매장 판매를 확인할 수 없습니다.';return;}
+    if(!selMy.length){$('st').textContent='⚠️ 📍 내 매장을 먼저 골라 주세요.';return;}
     $('st').textContent='분석 중…'; await wait();
-    const r=StyleStock.build(files.filter(f=>f.type),getF(),getMyStore());
-    if(!r.has.sales){$('st').textContent='⚠️ 판매현황 파일이 없어 타매장 판매를 확인할 수 없습니다.';return;}
-    if(!r.myStore){$('st').textContent='⚠️ 📍 내 매장을 먼저 골라 주세요.';return;}
-    if(!r.zeroStockRows||!r.zeroStockRows.length){$('st').textContent=`✅ 타매장 판매 있고 내 재고 없는 항목이 없습니다 (내 매장: ${r.myStore}).`;$('res').hidden=false;return;}
+    const r=StyleStock.build(files.filter(f=>f.type),getF(),getMyStore(),{myStores:selMy,peers:selPeer});
+    const Z=r.zeroStockRows||[];
+    if(!Z.length){$('st').textContent='✅ 타매장 판매 있고 내 재고 없는 항목이 없습니다.';$('res').hidden=false;return;}
     $('st').textContent='엑셀 서식 입히는 중…'; await wait();
-    // 같은 head/sizes 구조로 결과 만들기 (zeroStockRows를 aoa로 변환)
-    const r2=Object.assign({},r,{
-      aoa:r.zeroStockRows.map(row=>[row.store,row.year,row.month,row.mid,row.small,row.brand,row.item,row.style,row.color]
-        .concat(r.showCard?[row.list,row.sale,row.rate]:[])
-        .concat([row.qty,row.wh,row.total]).concat(r.sizes.map(z=>row.sizes[z]||''))),
-      stats:Object.assign({},r.stats,{rows:r.zeroStockRows.length,rowsBefore:r.zeroStockRows.length,
-        stores:new Set(r.zeroStockRows.map(x=>x.store)).size,
-        stockSum:0,qtySum:r.zeroStockRows.reduce((a,x)=>a+(+x.qty||0),0),
-        ymFill:0,midFill:r.zeroStockRows.filter(x=>x.mid).length,smallFill:r.zeroStockRows.filter(x=>x.small).length,
-        cardFill:r.zeroStockRows.filter(x=>x.sale!=='').length,
-        whFill:r.zeroStockRows.filter(x=>x.wh!=='').length,
-      })
-    });
-    const fn2=kstStamp()+'_타매장판매_내재고없음'+(r.myStore?'_'+r.myStore:'')+'.xlsx';
-    const bytes2=StyleStock.toFile(XLSX,r2);
-    const url2=URL.createObjectURL(new Blob([bytes2],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
-    const a2=document.createElement('a'); a2.href=url2; a2.download=fn2; document.body.appendChild(a2); a2.click(); a2.remove(); setTimeout(()=>URL.revokeObjectURL(url2),5000);
-    const S2=r2.stats;
-    $('kpi').innerHTML=`<div><small>해당 항목</small><b>${S2.rows.toLocaleString()}개</b></div><div><small>타매장 판매수량</small><b>${S2.qtySum.toLocaleString()}</b></div><div><small>창고재고</small><b>${r.has.wh?r.zeroStockRows.reduce((a,x)=>a+(+x.wh||0),0).toLocaleString():'미첨부'}</b></div>`;
-    $('warns').innerHTML=`<li>ⓘ 내 매장(${esc(r.myStore)})에 재고 0 · 타매장 판매수량 있는 ${S2.rows}개 스타일×컬러입니다.</li>`;
+    const fn2=kstStamp()+'_타매장판매_내재고없음_'+myTag()+'.xlsx';
+    dl(StyleStock.toZeroFile(XLSX,r),fn2);
+    const per={}; Z.forEach(x=>per[x.store]=(per[x.store]||0)+1);
+    const withPeer=Z.filter(x=>+x.peerSum>0).length;
+    $('kpi').innerHTML=[['해당 항목',Z.length],['타매장 판매수량',Z.reduce((a,x)=>a+(+x.qty||0),0)]].concat(r.peers.length?[['상대매장 보유 항목',withPeer]]:[])
+      .concat(r.has.wh?[['창고 보유 항목',Z.filter(x=>+x.wh>0).length]]:[])
+      .map(([a,b])=>`<div><small>${a}</small><b>${b.toLocaleString()}</b></div>`).join('');
+    const w=[`내 매장별: `+Object.entries(per).map(([k,v])=>`${k} ${v.toLocaleString()}개`).join(' · ')];
+    const pn=peerNote(r); if(pn) w.push(pn);
+    if(r.peers.length) w.push('엑셀 정렬: 내 매장 → 타매장 판매 많은 순 → 상대재고 많은 순. 상대재고 칸이 보라색이면 그 매장에 재고가 있다는 뜻이에요.');
+    $('warns').innerHTML=w.map(x=>'<li>ⓘ '+esc(x)+'</li>').join('');
     $('res').hidden=false; $('st').textContent='✅ 다운로드 완료: '+fn2;
   };
 
@@ -852,24 +896,26 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   $('go3').onclick=async()=>{
     if(!hasT('catalog')){$('st').textContent='⚠️ 대조할 상품 리스트 파일이 필요합니다.';return;}
     if(!hasStockFile()){$('st').textContent='⚠️ 점재고 또는 바코드 출력 파일이 필요합니다.';return;}
-    if(!selStore){$('st').textContent='⚠️ 📍 내 매장을 먼저 선택해 주세요.';return;}
+    if(!selMy.length){$('st').textContent='⚠️ 📍 내 매장을 먼저 골라 주세요.';return;}
     $('st').textContent='대조 중…'; await wait();
-    const r=StyleStock.build(files.filter(f=>f.type),getF(),selStore);
+    const r=StyleStock.build(files.filter(f=>f.type),getF(),getMyStore(),{myStores:selMy,peers:selPeer});
     const g=r.gap;
     if(!g){$('st').textContent='⚠️ 대조할 수 없습니다. 파일과 매장 선택을 확인해 주세요.';return;}
     if(!g.heldCnt&&g.rows.length){ /* 보유 0건이면 경고만 (해당 카테고리 미취급 매장일 수 있음) */ }
     $('st').textContent='엑셀 만드는 중…'; await wait();
-    const fn3=kstStamp()+'_상품리스트대조_미보유_'+selStore+'.xlsx';
-    const b3=StyleStock.toGapFile(XLSX,g,r.has.wh,r.has.sales);
+    const fn3=kstStamp()+'_상품리스트대조_미보유_'+myTag()+'.xlsx';
+    const b3=StyleStock.toGapFile(XLSX,g,r.has.wh,r.has.sales,r.peers);
     const u3=URL.createObjectURL(new Blob([b3],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
     const a3=document.createElement('a'); a3.href=u3; a3.download=fn3; document.body.appendChild(a3); a3.click(); a3.remove(); setTimeout(()=>URL.revokeObjectURL(u3),5000);
     const c={S:0,A:0,B:0,C:0}; let cg=0; g.rows.forEach(x=>{c[x.grade]++; if(x.verdict==='칼라 결손')cg++;});
-    $('kpi').innerHTML=[['리스트 상품',g.total],['보유',g.heldCnt],['미보유',g.rows.length],['🔴 S 즉시요청',c.S],['🟠 A 창고있음',c.A],['🟡 B 타매장판매',c.B],['⚪ C 재고없음',c.C]]
+    $('kpi').innerHTML=[['리스트 상품',g.total]].concat(selMy.length>1?[]:[['보유',g.heldCnt]]).concat([['미보유'+(selMy.length>1?' (매장 합)':''),g.rows.length]]).concat(r.peers.length?[['상대매장 보유',g.rows.filter(x=>+x.peerSum>0).length]]:[]).concat([,['🔴 S 즉시요청',c.S],['🟠 A 창고있음',c.A],['🟡 B 타매장판매',c.B],['⚪ C 재고없음',c.C]])
       .map(([a,b])=>`<div><small>${a}</small><b>${b.toLocaleString()}</b></div>`).join('');
-    const w=[`내 매장: ${selStore} · 미보유 ${g.rows.length.toLocaleString()}건 중 칼라 결손(같은 스타일 다른 컬러만 보유) ${cg.toLocaleString()}건`];
+    const per={}; g.rows.forEach(x=>per[x.store]=(per[x.store]||0)+1);
+    const w=[`미보유 매장별: `+selMy.map(s=>`${s} ${(per[s]||0).toLocaleString()}건`).join(' · ')+` · 칼라 결손(같은 스타일 다른 컬러만 보유) ${cg.toLocaleString()}건 포함`];
+    const pn=peerNote(r); if(pn) w.push(pn);
     if(!r.has.wh) w.push('창고재고 파일이 없어 S·A 등급이 나오지 않습니다.');
     if(!r.has.sales) w.push('판매현황 파일이 없어 S·B 등급이 나오지 않습니다.');
-    if(!g.heldCnt) w.push('보유 상품이 0건입니다. 이 카테고리를 취급하지 않는 매장이거나, 내 매장 선택·재고 파일이 맞는지 확인해 주세요.');
+    if(!g.heldCnt&&selMy.length===1) w.push('보유 상품이 0건입니다. 이 카테고리를 취급하지 않는 매장이거나, 내 매장 선택·재고 파일이 맞는지 확인해 주세요.');
     $('warns').innerHTML=w.map(x=>'<li>ⓘ '+esc(x)+'</li>').join('');
     $('res').hidden=false; $('st').textContent='✅ 다운로드 완료: '+fn3;
   };
