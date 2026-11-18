@@ -33,12 +33,13 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
 .rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;margin-top:10px}.rg label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700}
 .rg span{display:flex;align-items:center;gap:6px;color:var(--sub)}.rg input{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px}.rg input.set{border-color:var(--pri);background:#eef3ff}
 .foot{color:var(--sub);font-size:12px;text-align:center;margin-top:18px}
+.guide summary{font-weight:700;cursor:pointer}.guide h3{font-size:15px;margin:18px 0 6px}.gl{color:var(--ink);margin:6px 0 0;line-height:1.65;font-size:13.5px}.gb{border:1px solid var(--line);border-left:5px solid;border-radius:10px;padding:10px 12px;margin-top:8px}.gb p{margin:4px 0 0;line-height:1.55;font-size:13.5px}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}table.mx td,table.mx th{text-align:center;padding:6px 2px}table.mx td:first-child{text-align:left;white-space:nowrap}table.mx small{font-size:10.5px}.guide table.g td:first-child{white-space:nowrap}table.g small{color:var(--sub)}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>📦 스타일별 재고·판매현황 추출기 <span class="bd ok">v5</span></h1>
-  <p class="lead">ARS 원본 엑셀을 넣으면 <b>점×스타일×컬러</b>별 재고·판매·창고·입고년월이 채워진 엑셀을 내려받습니다. <b>점재고는 ① 스타일별 입출고실적조회(점 기준) 또는 ② 바코드 출력 중 하나만 있으면 됩니다.</b> 결과 행은 이 점재고 파일에 있는 점·스타일·컬러로만 만듭니다. 나머지 파일은 선택이며 없으면 그 열만 비워집니다. 파일은 이 PC 안에서만 처리되고 어디에도 전송되지 않습니다.</p>
+  <p class="lead">ARS 엑셀을 넣고 버튼을 누르면 정리된 엑셀이 받아져요. <b>버튼은 3개</b> — 🔵 우리 매장 재고·판매 정리 · 🟢 다른 매장은 팔리는데 우리는 없는 상품 · 🟣 상품 목록 중 우리 매장에 없는 상품. 어떤 파일이 필요한지는 아래 <b>📖 사용 방법</b>을 보세요.</p>
 
   <div class="card">
     <div class="drop" id="drop"><b>여기에 원본 엑셀을 끌어다 놓기</b><p>또는 눌러서 선택 · 여러 개 한꺼번에 · 순서 상관없음 (종류는 자동 인식)</p></div>
@@ -71,26 +72,57 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
     <ul class="warns" id="warns"></ul>
   </div>
 
-  <div class="card">
-    <details open><summary>📖 사용 방법 · 원본 받는 곳</summary>
+  <div class="card guide">
+    <details open><summary>📖 사용 방법 — 처음이면 이것만 읽으세요</summary>
+
+      <h3>한눈에 보기</h3>
+      <p class="gl">① 파일을 넣고 → ② 📍 내 매장을 고르고 → ③ 원하는 버튼을 누르면 엑셀이 받아져요.</p>
+
+      <h3>버튼 3개 — 무엇을 알고 싶나요?</h3>
+      <div class="gb" style="border-left-color:var(--pri)"><b><span class="dot" style="background:var(--pri)"></span>파란 버튼 · 엑셀 만들기</b>
+        <p>"<b>우리 매장에 뭐가 몇 개 있고, 얼마나 팔렸지?</b>"<br>매장에 있는 상품마다 재고·판매·창고·가격을 한 줄씩 정리해 줘요.</p></div>
+      <div class="gb" style="border-left-color:var(--ok)"><b><span class="dot" style="background:var(--ok)"></span>초록 버튼 · 타매장 판매 · 내 재고없음</b>
+        <p>"<b>다른 매장은 잘 파는데, 우리 매장엔 없는 상품이 뭐지?</b>"<br>다른 매장에서 팔렸는데 우리 매장 재고가 0개인 상품만 뽑아 줘요.</p></div>
+      <div class="gb" style="border-left-color:#7030A0"><b><span class="dot" style="background:#7030A0"></span>보라 버튼 · 상품 리스트 대조</b>
+        <p>"<b>이 목록에 있는 상품 중에 우리 매장에 없는 게 뭐지?</b>"<br>내가 가진 상품 목록(카테고리·브랜드·행사 등 아무거나)과 우리 매장 재고를 비교해서 없는 것만 뽑아 줘요.</p></div>
+
+      <h3>파일 6종류 — 각각 무슨 파일?</h3>
       <table class="g">
-        <tr><th>채워지는 열</th><th>ARS 화면 (원본 파일)</th></tr>
-        <tr><td>점 · 브랜드 · 상품 · 스타일 · 컬러 · <b>합계 · 사이즈별 재고</b></td><td>스타일별 입출고실적조회 — <b>점</b> 기준 <span style="color:var(--sub)">또는</span> <b>바코드 출력</b> (인쇄매수 = 현재재고)</td></tr>
-        <tr><td><b>창고</b> (스타일·컬러별 창고 현재재고 합계)</td><td>스타일별 입출고실적조회 — <b>창고</b> 기준</td></tr>
-        <tr><td><b>판매수량</b> · 중분류·소분류</td><td>스타일별 판매현황상세</td></tr>
-        <tr><td><b>년 · 월</b> (최종입고일) · 중분류·소분류</td><td>사이즈별 현재고 조회</td></tr>
-        <tr><td><b>정상가 · 판매가 · 감가율</b></td><td>Shoe Card 출력</td></tr>
-        <tr><td><b>상품 리스트 대조</b> (내 매장 미보유 상품)</td><td><b>아무 상품 리스트</b> — 범위(카테고리·브랜드·행사 등)와 양식 무관. 스타일(품번) 열만 있으면 자동 인식</td></tr>
+        <tr><th>파일</th><th>쉽게 말하면</th><th>ARS 메뉴</th></tr>
+        <tr><td><b>Ⓐ 점재고</b></td><td>우리 매장에 <b>지금 몇 개</b> 있는지</td><td>① 스타일별 입출고실적조회(<b>점</b> 기준)<br><b>또는</b> ② 바코드 출력<br><small>둘 중 <b>아무거나 하나</b>만 넣으면 돼요</small></td></tr>
+        <tr><td><b>Ⓑ 창고재고</b></td><td><b>창고에</b> 몇 개 있는지</td><td>스타일별 입출고실적조회(<b>창고</b> 기준)</td></tr>
+        <tr><td><b>Ⓒ 판매현황</b></td><td>어느 매장에서 <b>몇 개 팔렸는지</b></td><td>스타일별 판매현황상세</td></tr>
+        <tr><td><b>Ⓓ 입고년월</b></td><td>상품이 <b>언제 들어왔는지</b></td><td>사이즈별 현재고 조회</td></tr>
+        <tr><td><b>Ⓔ 가격</b></td><td>정상가·판매가·<b>할인율</b></td><td>Shoe Card 출력</td></tr>
+        <tr><td><b>Ⓕ 상품 리스트</b></td><td><b>비교하고 싶은 상품 목록</b></td><td>아무 엑셀이나 OK — 스타일(품번) 칸만 있으면 도구가 알아서 찾아요</td></tr>
       </table>
-      <p style="color:var(--sub);margin:10px 0 0;line-height:1.6">
-        · 결과 1행은 열별 합계, 2행은 제목, 3행부터 데이터입니다(기존 양식과 동일). 필터가 걸려 있어 '점' 열로 매장을 고르면 됩니다.<br>
-        · 결과 행은 점재고(또는 바코드) 파일 기준입니다. 판매가 있어도 해당 파일에 없는 점·스타일·컬러는 행을 만들지 않습니다.<br>
-        · 바코드 출력 파일을 쓸 때: 스타일별입출고실적조회(점) 파일 없이 바코드 파일만 넣으면 됩니다. 두 파일을 동시에 넣으면 스타일별입출고실적조회가 우선입니다.<br>
-        · 점재고에 있지만 현재재고 0이고 판매도 없는 행은 뺍니다.<br>
-        · 출력 범위: 감가율·판매수량·재고(합계)에 최소~최대를 넣으면 모두 만족하는 행만 엑셀에 담습니다. 판매 없음은 0, 감가율 조건이 있으면 Shoe Card에 없는 행은 빠집니다. 파일 이름에 조건이 붙습니다.<br>
-        · 상품 리스트 대조: 스타일(품번) 열이 있는 엑셀이면 어떤 리스트든 됩니다. 제목 행 위치·열 순서·시트 위치는 도구가 찾고, 칼라 열이 없으면 스타일 단위로 비교합니다. 상품 리스트 + 점재고(①·② 중 하나) 파일을 넣고 내 매장을 고른 뒤 보라색 버튼. 현재재고 0이면 미보유로 봅니다. 창고재고·판매현황을 같이 넣으면 등급이 붙습니다 — <b>S</b> 창고 있음+타매장 판매 → 즉시 입고요청 · <b>A</b> 창고 있음 · <b>B</b> 타매장 판매만 → 점간이동 검토 · <b>C</b> 재고 없음. "칼라 결손"은 같은 스타일 다른 컬러만 보유한 경우입니다.<br>
-        · 문의: 대경지역 지역장
-      </p>
+
+      <h3>버튼마다 넣을 파일</h3>
+      <table class="g mx">
+        <tr><th>버튼</th><th>Ⓐ<br><small>점재고</small></th><th>Ⓑ<br><small>창고</small></th><th>Ⓒ<br><small>판매</small></th><th>Ⓓ<br><small>입고</small></th><th>Ⓔ<br><small>가격</small></th><th>Ⓕ<br><small>리스트</small></th><th>📍<br><small>매장</small></th></tr>
+        <tr><td><span class="dot" style="background:var(--pri)"></span><b>파랑</b></td><td>✅</td><td>➕</td><td>➕</td><td>➕</td><td>➕</td><td>–</td><td>△</td></tr>
+        <tr><td><span class="dot" style="background:var(--ok)"></span><b>초록</b></td><td>✅</td><td>➕</td><td>✅</td><td>➕</td><td>➕</td><td>–</td><td>✅</td></tr>
+        <tr><td><span class="dot" style="background:#7030A0"></span><b>보라</b></td><td>✅</td><td>➕</td><td>➕</td><td>–</td><td>–</td><td>✅</td><td>✅</td></tr>
+      </table>
+      <p class="gl"><b>✅ 꼭 필요</b> · <b>➕ 넣으면 더 좋아요</b> (없으면 그 칸만 비어요) · – 필요 없어요 · <b>△ 점재고를 ② 바코드 출력으로 넣었을 때만 필요</b><br>파일은 <b>한꺼번에 끌어다 놓아도 돼요.</b> 순서도 상관없고, 무슨 파일인지 도구가 알아서 알아봐요.</p>
+
+      <h3>보라 버튼 결과의 등급 보는 법</h3>
+      <table class="g">
+        <tr><th>등급</th><th>뜻</th><th>이렇게 하세요</th></tr>
+        <tr><td>🔴 <b>S</b></td><td>창고에 있고, 다른 매장에서도 팔림</td><td><b>바로 입고 요청</b></td></tr>
+        <tr><td>🟠 <b>A</b></td><td>창고에 있음</td><td>입고 요청 검토</td></tr>
+        <tr><td>🟡 <b>B</b></td><td>창고엔 없지만 다른 매장에서 팔림</td><td>점간이동 검토</td></tr>
+        <tr><td>⚪ <b>C</b></td><td>어디에도 재고 없음</td><td>참고만</td></tr>
+      </table>
+      <p class="gl">등급은 Ⓑ창고·Ⓒ판매 파일을 같이 넣어야 나와요. "칼라 결손" = 같은 모델의 <b>다른 색만</b> 우리 매장에 있다는 뜻이에요.</p>
+
+      <h3>알아두면 좋아요</h3>
+      <p class="gl">· 점재고 ①과 ②를 둘 다 넣으면 ①을 써요.<br>
+        · 파란 버튼 아래 <b>🎯 출력 범위</b>로 "안 팔리는 재고만", "할인 50% 이상만"처럼 골라서 받을 수 있어요.<br>
+        · 받은 엑셀은 1행이 합계, 2행이 제목이에요. 제목 칸의 ▼ 를 눌러 매장·브랜드별로 골라 보세요.<br>
+        · 재고 0개이고 판매도 없는 상품은 빠져요.<br>
+        · 파일은 <b>이 PC 안에서만</b> 처리돼요. 어디에도 보내지지 않아요.<br>
+        · 문의: 대경지역 지역장</p>
     </details>
   </div>
   <div class="foot">대경지역 내부용 도구 · 파일은 브라우저 안에서만 처리됩니다</div>
@@ -691,7 +723,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   let selStore='';
   function getMyStore(){return needStore()?selStore:'';}
   const hasT=t=>files.some(f=>f.type===t);
-  function needStore(){return (hasT('barcode')&&!hasT('store'))||hasT('catalog');}
+  function needStore(){return hasStockFile();}
   function draw(){
     const by={store:[],barcode:[],wh:[],sales:[],size:[],card:[],catalog:[]}; const unk=[];
     files.forEach(f=>f.type?by[f.type].push(f.name):unk.push(f.name));
@@ -701,7 +733,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       if(k==='barcode'&&by.store.length>0) return `<div class="slot"><div class="t">${T[k].label}<span class="bd no">대기</span></div><div class="d" style="color:var(--warn)">스타일별입출고실적조회(점) 파일이 있어 바코드 파일은 무시됩니다</div></div>`;
       return `<div class="slot"><div class="t">${T[k].label}<span class="bd ${n?'ok':'no'}">${n?'✓ '+n+'개':'미첨부'}</span></div><div class="d">${(k==='store'||k==='barcode')&&!n?(hasStockFile()?'다른 점재고 파일 사용 중 — 없어도 됨':'①② 중 하나는 꼭 넣어 주세요'):(n?'→ ':'없으면 비움: ')+SLOT_DESC[k]}</div>${n?`<div class="f">${by[k].map(esc).join('<br>')}</div>`:''}</div>`;
     }).join('')
-      +(needStore()?`<div class="slot" style="border-color:var(--pri)"><div class="t">📍 내 매장 선택<span class="bd ${selStore?'ok':'warn'}">${selStore?'✓ 선택됨':'필수'}</span></div><div class="d">${hasT('catalog')?'미보유 상품 대조 기준 매장':'바코드 파일의 매장 = 타매장 비교 기준'}</div><select id="myStoreSel" style="margin-top:6px;padding:6px 8px;border-radius:6px;border:1px solid var(--line);font:inherit;width:100%"><option value="">— 내 매장 선택 —</option>${STORE_LIST.map(s=>`<option${s===selStore?' selected':''}>${esc(s)}</option>`).join('')}</select></div>`:'')
+      +(needStore()?`<div class="slot" style="border-color:var(--pri)"><div class="t">📍 내 매장 선택<span class="bd ${selStore?'ok':'warn'}">${selStore?'✓ 선택됨':'선택'}</span></div><div class="d">우리 매장을 골라 주세요 (파란 버튼은 바코드 출력 파일일 때만 필요)</div><select id="myStoreSel" style="margin-top:6px;padding:6px 8px;border-radius:6px;border:1px solid var(--line);font:inherit;width:100%"><option value="">— 내 매장 선택 —</option>${STORE_LIST.map(s=>`<option${s===selStore?' selected':''}>${esc(s)}</option>`).join('')}</select></div>`:'')
       +(unk.length?`<div class="slot"><div class="t">인식 못한 파일<span class="bd warn">${unk.length}개</span></div><div class="d">${unk.map(esc).join('<br>')}</div></div>`:'');
     const ok=hasStockFile();
     $('go').disabled=!ok; $('go2').disabled=!ok; $('go3').disabled=!(ok&&hasT('catalog'));
@@ -790,7 +822,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     $('st').textContent='분석 중…'; await wait();
     const r=StyleStock.build(files.filter(f=>f.type),getF(),getMyStore());
     if(!r.has.sales){$('st').textContent='⚠️ 판매현황 파일이 없어 타매장 판매를 확인할 수 없습니다.';return;}
-    if(!r.myStore){$('st').textContent='⚠️ 내 매장을 특정할 수 없습니다. 바코드 파일을 넣거나 매장이 1곳인 점재고 파일을 사용해 주세요.';return;}
+    if(!r.myStore){$('st').textContent='⚠️ 📍 내 매장을 먼저 골라 주세요.';return;}
     if(!r.zeroStockRows||!r.zeroStockRows.length){$('st').textContent=`✅ 타매장 판매 있고 내 재고 없는 항목이 없습니다 (내 매장: ${r.myStore}).`;$('res').hidden=false;return;}
     $('st').textContent='엑셀 서식 입히는 중…'; await wait();
     // 같은 head/sizes 구조로 결과 만들기 (zeroStockRows를 aoa로 변환)
