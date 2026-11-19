@@ -83,7 +83,7 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
       <div class="gb" style="border-left-color:var(--pri)"><b><span class="dot" style="background:var(--pri)"></span>파란 버튼 · 엑셀 만들기</b>
         <p>"<b>우리 매장에 뭐가 몇 개 있고, 얼마나 팔렸지?</b>"<br>매장에 있는 상품마다 재고·판매·창고·가격을 한 줄씩 정리해 줘요.</p></div>
       <div class="gb" style="border-left-color:var(--ok)"><b><span class="dot" style="background:var(--ok)"></span>초록 버튼 · 타매장 판매 · 내 재고없음</b>
-        <p>"<b>다른 매장은 잘 파는데, 우리 매장엔 없는 상품이 뭐지?</b>"<br>다른 매장에서 팔렸는데 우리 매장 재고가 0개인 상품만 뽑아 줘요. <b>상대매장에 몇 개 있는지</b>도 같이 보여 줘요.</p></div>
+        <p>"<b>다른 매장은 잘 파는데, 우리 매장엔 없는 상품이 뭐지?</b>"<br>다른 매장에서 팔렸는데 우리 매장 재고가 0개인 상품만 뽑아 줘요. 상대매장이 <b>몇 개 팔았고 몇 개 있는지</b> 내 매장 줄 아래에 매장별로 보여 줘요.</p></div>
       <div class="gb" style="border-left-color:#7030A0"><b><span class="dot" style="background:#7030A0"></span>보라 버튼 · 상품 리스트 대조</b>
         <p>"<b>이 목록에 있는 상품 중에 우리 매장에 없는 게 뭐지?</b>"<br>내가 가진 상품 목록(카테고리·브랜드·행사 등 아무거나)과 우리 매장 재고를 비교해서 없는 것만 뽑아 줘요. <b>상대매장 재고</b>도 같이 보여 줘요.</p></div>
 
@@ -109,19 +109,14 @@ table.g{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}table
 
       <h3>📍 내 매장 · 🏬 상대매장 고르기</h3>
       <p class="gl">· <b>📍 내 매장은 여러 곳</b>을 눌러 고를 수 있어요. 여러 곳이면 <b>매장별로 따로</b> 뽑고, 엑셀 맨 앞 "내 매장" 칸에 매장 이름이 들어가요. (바코드 출력 파일은 1곳만)<br>
-        · <b>🏬 상대매장</b>을 고르면 그 매장들의 재고가 <b>매장별 칸 + 합계</b>로 나와요. <b>안 고르면 내 매장을 뺀 전 매장</b>이 나와요.<br>
-        · 상대매장 재고는 <b>전 매장이 들어 있는 점재고 ①</b>(스타일별 입출고실적조회)을 넣어야 나와요.<br>
+        · <b>🏬 상대매장</b>을 고르면 그 매장들의 <b>판매수량</b>(초록) · <b>재고</b>가 나와요. <b>안 고르면 내 매장을 뺀 전 매장</b>이에요.<br>
+        · 상대매장 재고는 <b>전 매장이 들어 있는 점재고 ①</b>(스타일별 입출고실적조회)을 넣었을 때만 나와요.<br>
         · 지역 <b>전 매장 재고·판매를 한 번에</b> 보려면: 전 매장 점재고 ① + 판매현황을 넣고 🔵 파란 버튼.</p>
 
-      <h3>보라 버튼 결과의 등급 보는 법</h3>
-      <table class="g">
-        <tr><th>등급</th><th>뜻</th><th>이렇게 하세요</th></tr>
-        <tr><td>🔴 <b>S</b></td><td>창고에 있고, 다른 매장에서도 팔림</td><td><b>바로 입고 요청</b></td></tr>
-        <tr><td>🟠 <b>A</b></td><td>창고에 있음</td><td>입고 요청 검토</td></tr>
-        <tr><td>🟡 <b>B</b></td><td>창고엔 없지만 다른 매장에서 팔림</td><td>점간이동 검토</td></tr>
-        <tr><td>⚪ <b>C</b></td><td>어디에도 재고 없음</td><td>참고만</td></tr>
-      </table>
-      <p class="gl">등급은 Ⓑ창고·Ⓒ판매 파일을 같이 넣어야 나와요. "칼라 결손" = 같은 모델의 <b>다른 색만</b> 우리 매장에 있다는 뜻이에요.</p>
+      <h3>결과 엑셀 보는 법</h3>
+      <p class="gl">· <b>정렬</b>: 중분류 → 브랜드 → 상품 → 스타일 → 컬러 가나다(ABC)순이에요.<br>
+        · <b>초록</b>: <b>파란 줄 = 내 매장</b>(재고 0), 그 아래 줄 = 그 상품을 팔았거나 재고가 있는 <b>상대매장</b>이에요(판매수량 많은 순). "점" 칸에 매장 이름이 있어요. 상대매장 재고 칸은 전 매장 점재고 ①을 넣었을 때만 나와요.<br>
+        · <b>보라</b>: "스타일 미보유" = 그 모델이 아예 없음, "칼라 결손" = 같은 모델의 <b>다른 색만</b> 있음. 창고재고·타매장판매 칸으로 입고·점간이동을 판단하세요.</p>
 
       <h3>알아두면 좋아요</h3>
       <p class="gl">· 점재고 ①과 ②를 둘 다 넣으면 ①을 써요.<br>
@@ -456,41 +451,51 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     const myList = (opts.myStores && opts.myStores.length ? opts.myStores : (effectiveMyStore ? [effectiveMyStore] : [])).map(s);
     const myN = new Set(myList.map(norm));
     const stockStores = storeOrder.slice();
-    // 상대매장: 지정하면 그 매장들, 비우면 '내 매장 뺀 전 매장'(점재고에 있는 매장)
-    const peers = (opts.peers && opts.peers.length ? opts.peers.map(s) : stockStores.filter(x => !myN.has(norm(x))).sort((a, b) => a.localeCompare(b)));
-    const peerOn = has.store && peers.length > 0;   // 상대 재고는 전 매장 점재고(①)가 있어야 계산
+    const salesStores = [...new Set(Object.values(salesKeys).map(x => s(x.store)).filter(Boolean))];
+    const stN = new Set(stockStores.map(norm));
+    // 상대매장: 지정하면 그 매장들, 비우면 '내 매장 뺀 전 매장'(점재고·판매현황에 나오는 매장)
+    const peers = (opts.peers && opts.peers.length ? opts.peers.map(s)
+      : [...new Set(stockStores.concat(salesStores))].filter(x => !myN.has(norm(x))).sort((a, b) => a.localeCompare(b)));
+    // 상대매장 재고는 점재고 파일에 그 상대매장이 들어 있을 때만 보여 줌
+    const peerStock = peers.filter(p => stN.has(norm(p)));
+    const peerOn = peerStock.length > 0;
     const stTot = (store, ik) => { const v = stock[norm(store) + '\u0001' + ik]; return v ? v.total : 0; };
-    const peerOf = (M, ik) => { const o = {}; let sum = 0; for (const p of peers) { if (norm(p) === norm(M)) { o[p] = ''; continue; } const q = stTot(p, ik); o[p] = q; sum += q; } return { o, sum }; };
+    // 매장별 판매: 스타일|컬러 → {점(norm): 수량}
+    const salesBy = {};
+    for (const [k, q] of Object.entries(sales)) { const x = salesKeys[k]; if (!x || !(q > 0)) continue; const ik = K(x.style, x.color); const o = salesBy[ik] || (salesBy[ik] = {}); o[norm(x.store)] = (o[norm(x.store)] || 0) + q; }
+    let zeroItems = 0;
+    // 엑셀 '오름차순'과 같은 비교: 대소문자 무시 · 하이픈/작은따옴표 무시 · 빈칸은 맨 뒤
+    const xk = v => s(v).toUpperCase().replace(/[-']/g, '');
+    const cx = (a, b) => { const x = xk(a), y = xk(b); if (!x || !y) return (!x) - (!y); return x < y ? -1 : x > y ? 1 : 0; };
+    const cmpX5 = (a, b) => cx(a.mid, b.mid) || cx(a.brand, b.brand) || cx(a.item, b.item) || cx(a.style, b.style) || cx(a.color, b.color);
 
     if (has.sales && myList.length) {
+      const cmpItem = cmpX5;
       for (const M of myList) {
-        const otherSales = {};
-        for (const [k, qty] of Object.entries(sales)) {
-          const { store, style, color } = salesKeys[k] || {};
-          if (!store || !style || norm(store) === norm(M) || !(qty > 0)) continue;
-          const ik = K(style, color);
-          otherSales[ik] = (otherSales[ik] || 0) + qty;
-        }
-        for (const [ik, q] of Object.entries(otherSales)) {
-          if (stTot(M, ik) > 0) continue;
+        const pl = peers.filter(p => norm(p) !== norm(M));
+        const items = [];
+        for (const [ik, sb] of Object.entries(salesBy)) {
+          const ps = pl.reduce((t, p) => t + (sb[norm(p)] || 0), 0);
+          if (!(ps > 0) || stTot(M, ik) > 0) continue;   // 상대매장 판매 있고 내 매장 재고 0
           const [stylePart, colorPart] = ik.split('\u0001');
-          const inf = info[ik] || {}, c = card[ik], pr = peerOn ? peerOf(M, ik) : { o: {}, sum: '' };
-          zeroStockRows.push({
-            store: M, year: '', month: '', mid: inf.mid || '', small: inf.small || '',
-            brand: inf.brand || '', item: inf.item || '',
+          const inf = info[ik] || {}, c = card[ik];
+          const base = { mid: inf.mid || '', small: inf.small || '', brand: inf.brand || '', item: inf.item || '',
             style: inf.style || stylePart, color: inf.color || colorPart,
-            list: c ? c.list : '', sale: c ? c.sale : '', rate: c ? c.rate : '',
-            qty: q, wh: ik in wh ? wh[ik] : '', total: 0, sizes: {},
-            _otherSalesQty: q, peer: pr.o, peerSum: pr.sum,
-          });
+            list: c ? c.list : '', sale: c ? c.sale : '', rate: c ? c.rate : '' };
+          // 상대매장 행: 판매 또는 재고가 있는 매장만, 판매수량↓ → 재고↓
+          const pr = pl.map(p => ({ p, q: sb[norm(p)] || 0, st: peerOn && stN.has(norm(p)) ? stTot(p, ik) : '' }))
+            .filter(x => x.q > 0 || +x.st > 0)
+            .sort((a, b) => b.q - a.q || (+b.st || 0) - (+a.st || 0) || a.p.localeCompare(b.p));
+          items.push({ base, ik, myQty: sb[norm(M)] || 0, peerQty: ps, pr });
+        }
+        items.sort((a, b) => cmpItem(a.base, b.base) || b.peerQty - a.peerQty);
+        zeroItems += items.length;
+        for (const it of items) {
+          zeroStockRows.push(Object.assign({ my: M, store: M, kind: '내 매장', qty: it.myQty, stock: 0,
+            wh: it.ik in wh ? wh[it.ik] : (has.wh ? 0 : ''), peerQty: it.peerQty, _otherSalesQty: it.peerQty, year: '', month: '', total: 0, sizes: {} }, it.base));
+          for (const x of it.pr) zeroStockRows.push(Object.assign({ my: M, store: x.p, kind: '상대매장', qty: x.q, stock: x.st, wh: '', peerQty: '' }, it.base));
         }
       }
-      const mo = x => myList.indexOf(x);
-      zeroStockRows.sort((a, b) => mo(a.store) - mo(b.store) ||
-        ((+b._otherSalesQty || 0) - (+a._otherSalesQty || 0)) ||
-        ((+b.peerSum || 0) - (+a.peerSum || 0)) ||
-        ((+b.wh || 0) - (+a.wh || 0)) ||
-        cmp(a.style, b.style) || cmp(a.color, b.color));
     }
     const showCard = has.card;
     const head = ['점', '년', '월', '중분류', '소분류', '브랜드', '상품', '스타일', '컬러']
@@ -558,9 +563,9 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
             const alt = st2 ? norm(st2) : ks;
             const w = sumM(whBy[ks] || whBy[alt], kc), o = sumM(osBy[ks] || osBy[alt], kc);
             let peer = {}, peerSum = '';
-            if (peerOn) { peerSum = 0; for (const p of peers) { if (norm(p) === norm(M)) { peer[p] = ''; continue; } const m = stBy[norm(p)] || {}; const q = sumM(m[ks] || m[alt], kc); peer[p] = q; peerSum += q; } }
+            if (peerOn) { peerSum = 0; for (const p of peerStock) { if (norm(p) === norm(M)) { peer[p] = ''; continue; } const m = stBy[norm(p)] || {}; const q = sumM(m[ks] || m[alt], kc); peer[p] = q; peerSum += q; } }
             const inf = info[K(st, co)] || (st2 ? info[K(st2, co)] : null) || {};
-            rows.push({ store: M, grade: w > 0 && o > 0 ? 'S' : w > 0 ? 'A' : o > 0 ? 'B' : 'C', verdict,
+            rows.push({ store: M, verdict,
               brand: s(g(r, 'brand')) || inf.brand || '', item: s(g(r, 'item')) || inf.item || '', style: st, color: co,
               price: n(g(r, 'price')) || '', big: s(g(r, 'big')), mid: s(g(r, 'mid')) || inf.mid || '', small: s(g(r, 'small')) || inf.small || '',
               wh: has.wh ? w : '', other: has.sales ? o : '', peer, peerSum });
@@ -568,13 +573,13 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
         }
         total = Math.max(total, tM);
       }
-      const GO = { S: 0, A: 1, B: 2, C: 3 }, mo = x => myList.indexOf(x);
-      rows.sort((a, b) => mo(a.store) - mo(b.store) || GO[a.grade] - GO[b.grade] || (a.verdict === b.verdict ? 0 : a.verdict === '스타일 미보유' ? -1 : 1)
-        || (+b.other || 0) - (+a.other || 0) || (+b.peerSum || 0) - (+a.peerSum || 0) || (+b.wh || 0) - (+a.wh || 0) || a.brand.localeCompare(b.brand) || a.style.localeCompare(b.style));
+      const mo = x => myList.indexOf(x);
+      rows.sort((a, b) => mo(a.store) - mo(b.store) || cmpX5(a, b)
+        || (+b.other || 0) - (+a.other || 0));
       gap = { rows, total, heldCnt, store: myList.join(', '), stores: myList };
     }
 
-    return { head, aoa, sizes, found, unknown, has, stats: st, salesPeriod, sizeStores, cardStore, showCard, myStore: effectiveMyStore, myList, peers: peerOn ? peers : [], zeroStockRows, gap };
+    return { head, aoa, sizes, found, unknown, has, stats: st, salesPeriod, sizeStores, cardStore, showCard, myStore: effectiveMyStore, myList, peers, peerStock, peerOn, zeroItems, zeroStockRows, gap };
   }
 
   // 결과 시트(양식: A열 비움, 1행 합계, 2행 헤더)
@@ -684,12 +689,12 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
 
   // 카탈로그 대조 결과 엑셀 (한 장 · 등급 열 · 자동필터 · 1행 고정)
   // 표 한 장 엑셀 (1행 제목·자동필터·틀 고정) — kinds: 열 종류별 색/서식
-  function toTable(XLSX, head, kinds, aoa, sheet, freeze, rowStyle) {
+  function toTable(XLSX, head, kinds, aoa, sheet, freeze, rowFill) {
     const ws = XLSX.utils.aoa_to_sheet([head].concat(aoa));
     const ln = { style: 'thin', color: { rgb: 'BFBFBF' } }, border = { top: ln, bottom: ln, left: ln, right: ln };
     const st = (bg, fg, bold, center, fmt) => Object.assign({ font: { name: 'Noto Sans KR', sz: 10, bold: !!bold, color: { rgb: fg || '000000' } },
       fill: { patternType: 'solid', fgColor: { rgb: bg } }, border, alignment: { vertical: 'center', horizontal: center ? 'center' : undefined, wrapText: false } }, fmt ? { numFmt: fmt } : {});
-    const HB = { grade: 'C00000', verdict: '595959', store: '203864', text: '1F4E79', ctext: '1F4E79', price: '44546A', wh: '806000', sales: '548235', psum: '7030A0', peer: '8E7CC3' };
+    const HB = { grade: 'C00000', verdict: '595959', store: '203864', kind: '595959', num: '548235', text: '1F4E79', ctext: '1F4E79', price: '44546A', wh: '806000', sales: '548235', psum: '7030A0', peer: '8E7CC3' };
     const CB = { wh: 'FFF2CC', sales: 'E2F0D9', psum: 'E4DFEC', peer: 'F7F5FA', store: 'DDEBF7' };
     const GC = { S: ['C00000', 'FFFFFF'], A: ['F4B183', '000000'], B: ['FFE699', '000000'], C: ['EDEDED', '7F7F7F'] };
     head.forEach((h, c) => { ws[XLSX.utils.encode_cell({ r: 0, c })].s = st(HB[kinds[c]] || '1F4E79', 'FFFFFF', true, true); });
@@ -700,7 +705,10 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
         const v = row[c];
         if (k === 'grade') ws[a].s = st(GC[v] ? GC[v][0] : 'FFFFFF', GC[v] ? GC[v][1] : '000000', true, true);
         else if (k === 'verdict') ws[a].s = st(v === '스타일 미보유' ? 'FCE4D6' : 'FFFFFF', '000000', v === '스타일 미보유', true);
+        else if (rowFill && rowFill[i]) ws[a].s = st(rowFill[i], '000000', true, ['ctext', 'kind', 'num'].includes(k) || !!CB[k], ['price', 'num', 'wh', 'sales'].includes(k) ? '#,##0' : undefined);
         else if (k === 'store') ws[a].s = st(CB.store, '000000', true, false);
+        else if (k === 'kind') ws[a].s = st('FFFFFF', '595959', false, true);
+        else if (k === 'num') ws[a].s = st('FFFFFF', '000000', false, true, '#,##0');
         else if (k === 'price') ws[a].s = st('FFFFFF', '000000', false, false, '#,##0');
         else if (k === 'rate') ws[a].s = st('FFFFFF', '000000', false, true, '0%');
         else if (k === 'peer') ws[a].s = st(+v > 0 ? 'D9D2E9' : CB.peer, +v > 0 ? '000000' : 'A6A6A6', +v > 0, true, '#,##0');
@@ -708,7 +716,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
         else ws[a].s = st('FFFFFF', '000000', false, k === 'ctext');
       });
     });
-    const W = { grade: 6, verdict: 13, store: 20, price: 10, rate: 7, wh: 9, sales: 10, psum: 10, peer: 9, ctext: 9 };
+    const W = { grade: 6, verdict: 13, store: 20, kind: 9, num: 9, price: 10, rate: 7, wh: 9, sales: 10, psum: 10, peer: 9, ctext: 9 };
     ws['!cols'] = head.map((h, c) => ({ wch: kinds[c] === 'text' ? Math.min(30, Math.max(8, String(h).length * 2 + 2, ...aoa.slice(0, 300).map(r => String(r[c] == null ? '' : r[c]).length + 2))) : (W[kinds[c]] || 10) }));
     ws['!rows'] = [{ hpt: 30 }];
     ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: aoa.length, c: head.length - 1 } }) };
@@ -727,27 +735,28 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   }
   const peerHead = p => p.replace(/^([A-Z]{2}\s+)대구/, '$1');   // 'ST 대구성서점' → 'ST 성서점'(짧게, 브랜드 구분 유지)
 
-  // 초록 버튼: 타매장 판매 · 내 재고없음 (내 매장 복수 · 상대매장 재고)
+  // 초록 버튼: 타매장 판매 · 내 재고없음 — 내 매장 행 아래 상대매장 행(점별)
   function toZeroFile(XLSX, res) {
-    const rows = res.zeroStockRows, P = res.peers || [], C = res.showCard;
-    const head = ['내 매장', '중분류', '소분류', '브랜드', '상품', '스타일', '컬러'].concat(C ? ['정상가', '판매가', '감가율'] : [])
-      .concat(['타매장판매', '창고'], P.length ? ['상대재고 합계'].concat(P.map(peerHead)) : []);
-    const kinds = ['store', 'ctext', 'text', 'text', 'text', 'text', 'text'].concat(C ? ['price', 'price', 'rate'] : [])
-      .concat(['sales', 'wh'], P.length ? ['psum'].concat(P.map(() => 'peer')) : []);
-    const aoa = rows.map(x => [x.store, x.mid, x.small, x.brand, x.item, x.style, x.color].concat(C ? [x.list, x.sale, x.rate] : [])
-      .concat([x.qty, x.wh === '' ? (res.has.wh ? 0 : '') : x.wh], P.length ? [x.peerSum].concat(P.map(p => x.peer[p])) : []));
-    return toTable(XLSX, head, kinds, aoa, '타매장판매_내재고없음', 7);
+    const rows = res.zeroStockRows, C = res.showCard, S = res.peerOn, W = res.has.wh;
+    const head = ['내 매장', '점', '구분', '중분류', '소분류', '브랜드', '상품', '스타일', '컬러'].concat(C ? ['정상가', '판매가', '감가율'] : [])
+      .concat(['판매수량'], S ? ['재고'] : [], ['상대매장 판매 합계'], W ? ['창고'] : []);
+    const kinds = ['store', 'text', 'kind', 'ctext', 'text', 'text', 'text', 'text', 'text'].concat(C ? ['price', 'price', 'rate'] : [])
+      .concat(['sales'], S ? ['num'] : [], ['psum'], W ? ['wh'] : []);
+    const aoa = rows.map(x => [x.my, x.store, x.kind, x.mid, x.small, x.brand, x.item, x.style, x.color].concat(C ? [x.list, x.sale, x.rate] : [])
+      .concat([x.qty], S ? [x.stock] : [], [x.peerQty], W ? [x.wh] : []));
+    const fill = rows.map(x => x.kind === '내 매장' ? 'DDEBF7' : '');
+    return toTable(XLSX, head, kinds, aoa, '타매장판매_내재고없음', 3, fill);
   }
   // 보라 버튼: 상품 리스트 대조 (내 매장 복수 · 상대매장 재고)
   function toGapFile(XLSX, gap, hasWh, hasSales, peers) {
     const P = peers || [];
-    const head = ['내 매장', '등급', '판정', '브랜드', '상품명', '스타일', '칼라', '소비자가', '대분류', '중분류', '소분류', '창고재고', '타매장판매']
+    const head = ['내 매장', '판정', '브랜드', '상품명', '스타일', '칼라', '소비자가', '대분류', '중분류', '소분류', '창고재고', '타매장판매']
       .concat(P.length ? ['상대재고 합계'].concat(P.map(peerHead)) : []);
-    const kinds = ['store', 'grade', 'verdict', 'text', 'text', 'text', 'text', 'price', 'ctext', 'text', 'text', 'wh', 'sales']
+    const kinds = ['store', 'verdict', 'text', 'text', 'text', 'text', 'price', 'ctext', 'text', 'text', 'wh', 'sales']
       .concat(P.length ? ['psum'].concat(P.map(() => 'peer')) : []);
-    const aoa = gap.rows.map(x => [x.store, x.grade, x.verdict, x.brand, x.item, x.style, x.color, x.price, x.big, x.mid, x.small,
+    const aoa = gap.rows.map(x => [x.store, x.verdict, x.brand, x.item, x.style, x.color, x.price, x.big, x.mid, x.small,
       hasWh ? x.wh : '미첨부', hasSales ? x.other : '미첨부'].concat(P.length ? [x.peerSum].concat(P.map(p => x.peer[p])) : []));
-    return toTable(XLSX, head, kinds, aoa, '미보유상품', 3);
+    return toTable(XLSX, head, kinds, aoa, '미보유상품', 2);
   }
 
   root.StyleStock = { fixRange, detect, build, toSheet, toFile, toGapFile, toZeroFile, TYPES };
@@ -782,7 +791,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
       return `<div class="slot"><div class="t">${T[k].label}<span class="bd ${n?'ok':'no'}">${n?'✓ '+n+'개':'미첨부'}</span></div><div class="d">${(k==='store'||k==='barcode')&&!n?(hasStockFile()?'다른 점재고 파일 사용 중 — 없어도 됨':'①② 중 하나는 꼭 넣어 주세요'):(n?'→ ':'없으면 비움: ')+SLOT_DESC[k]}</div>${n?`<div class="f">${by[k].map(esc).join('<br>')}</div>`:''}</div>`;
     }).join('')
       +(needStore()?`<div class="slot" style="border-color:var(--pri)"><div class="t">📍 내 매장 <small>(여러 개 가능)</small><span class="bd ${selMy.length?'ok':'warn'}">${selMy.length?'✓ '+selMy.length+'곳':'선택'}</span></div><div class="d">${barcodeOnly()?'바코드 출력은 한 매장 파일이라 <b>1곳만</b> 고를 수 있어요':'여러 곳을 고르면 매장별로 따로 뽑고 "내 매장" 칸에 매장명이 들어가요'}</div>${chips('myChips',STORE_LIST,selMy,[])}</div>`
-        +(hasT('store')?`<div class="slot" style="border-color:#7030A0"><div class="t">🏬 상대매장 <small>(여러 개 가능)</small><span class="bd ${selPeer.length?'ok':'no'}">${selPeer.length?'✓ '+selPeer.length+'곳':'전 매장'}</span></div><div class="d">초록·보라 결과에 상대매장 재고를 매장별 칸 + 합계로 보여 줘요. <b>안 고르면 내 매장 뺀 전 매장</b>이에요.</div>${chips('peerChips',STORE_LIST,selPeer,selMy)}${selPeer.length?'<button type="button" class="mini" id="peerAll">전 매장으로 되돌리기</button>':''}</div>`:''):'')
+        +(hasT('store')?`<div class="slot" style="border-color:#7030A0"><div class="t">🏬 상대매장 <small>(여러 개 가능)</small><span class="bd ${selPeer.length?'ok':'no'}">${selPeer.length?'✓ '+selPeer.length+'곳':'전 매장'}</span></div><div class="d">초록 = 상대매장 판매·재고를 내 매장 줄 아래에, 보라 = 상대매장 재고 칸. <b>안 고르면 내 매장 뺀 전 매장</b>이에요.</div>${chips('peerChips',STORE_LIST,selPeer,selMy)}${selPeer.length?'<button type="button" class="mini" id="peerAll">전 매장으로 되돌리기</button>':''}</div>`:''):'')
       +(unk.length?`<div class="slot"><div class="t">인식 못한 파일<span class="bd warn">${unk.length}개</span></div><div class="d">${unk.map(esc).join('<br>')}</div></div>`:'');
     const ok=hasStockFile();
     $('go').disabled=!ok; $('go2').disabled=!ok; $('go3').disabled=!(ok&&hasT('catalog'));
@@ -868,7 +877,7 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
   // 타매장 판매 있고 내 매장 재고 없음 다운로드 (내 매장 복수 · 상대매장 재고)
   const myTag=()=>selMy.length===1?selMy[0]:selMy.length+'개점';
   const dl=(bytes,fn)=>{const u=URL.createObjectURL(new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));const a=document.createElement('a');a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000);};
-  const peerNote=r=>r.peers.length?`상대매장 재고: ${selPeer.length?r.peers.length+'곳 선택':'내 매장 뺀 전 매장 '+r.peers.length+'곳'} — 매장별 칸 + 합계`:(hasT('store')?'':'상대매장 재고는 전 매장 점재고 ①(스타일별 입출고실적조회)을 넣어야 나와요.');
+  const peerNote=r=>`상대매장: ${selPeer.length?r.peers.length+'곳 선택':'내 매장 뺀 전 매장 '+r.peers.length+'곳'}`+(r.peerOn?` · 재고 칸 표시(점재고에 있는 ${r.peerStock.length}곳)`:' · 점재고 파일에 상대매장이 없어 재고 칸은 뺐어요');
   $('go2').onclick=async()=>{
     if(!hasStockFile()){$('st').textContent='⚠️ 점재고 파일이 필요합니다.';return;}
     if(!hasT('sales')){$('st').textContent='⚠️ 판매현황 파일이 없어 타매장 판매를 확인할 수 없습니다.';return;}
@@ -880,14 +889,13 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     $('st').textContent='엑셀 서식 입히는 중…'; await wait();
     const fn2=kstStamp()+'_타매장판매_내재고없음_'+myTag()+'.xlsx';
     dl(StyleStock.toZeroFile(XLSX,r),fn2);
-    const per={}; Z.forEach(x=>per[x.store]=(per[x.store]||0)+1);
-    const withPeer=Z.filter(x=>+x.peerSum>0).length;
-    $('kpi').innerHTML=[['해당 항목',Z.length],['타매장 판매수량',Z.reduce((a,x)=>a+(+x.qty||0),0)]].concat(r.peers.length?[['상대매장 보유 항목',withPeer]]:[])
-      .concat(r.has.wh?[['창고 보유 항목',Z.filter(x=>+x.wh>0).length]]:[])
+    const mine=Z.filter(x=>x.kind==='내 매장'); const per={}; mine.forEach(x=>per[x.my]=(per[x.my]||0)+1);
+    $('kpi').innerHTML=[['해당 상품',mine.length],['상대매장 판매수량',mine.reduce((a,x)=>a+(+x.peerQty||0),0)]].concat(r.peerOn?[['상대매장 재고 있는 상품',mine.filter(m=>Z.some(z=>z.kind==='상대매장'&&z.my===m.my&&z.style===m.style&&z.color===m.color&&+z.stock>0)).length]]:[])
+      .concat(r.has.wh?[['창고 보유 상품',mine.filter(x=>+x.wh>0).length]]:[])
       .map(([a,b])=>`<div><small>${a}</small><b>${b.toLocaleString()}</b></div>`).join('');
     const w=[`내 매장별: `+Object.entries(per).map(([k,v])=>`${k} ${v.toLocaleString()}개`).join(' · ')];
-    const pn=peerNote(r); if(pn) w.push(pn);
-    if(r.peers.length) w.push('엑셀 정렬: 내 매장 → 타매장 판매 많은 순 → 상대재고 많은 순. 상대재고 칸이 보라색이면 그 매장에 재고가 있다는 뜻이에요.');
+    w.push(peerNote(r));
+    w.push('엑셀: 파란 줄 = 내 매장, 그 아래 = 판매·재고가 있는 상대매장(판매수량 많은 순). 정렬: 중분류→브랜드→상품→스타일→컬러 오름차순.');
     $('warns').innerHTML=w.map(x=>'<li>ⓘ '+esc(x)+'</li>').join('');
     $('res').hidden=false; $('st').textContent='✅ 다운로드 완료: '+fn2;
   };
@@ -904,17 +912,16 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
     if(!g.heldCnt&&g.rows.length){ /* 보유 0건이면 경고만 (해당 카테고리 미취급 매장일 수 있음) */ }
     $('st').textContent='엑셀 만드는 중…'; await wait();
     const fn3=kstStamp()+'_상품리스트대조_미보유_'+myTag()+'.xlsx';
-    const b3=StyleStock.toGapFile(XLSX,g,r.has.wh,r.has.sales,r.peers);
+    const b3=StyleStock.toGapFile(XLSX,g,r.has.wh,r.has.sales,r.peerOn?r.peerStock:[]);
     const u3=URL.createObjectURL(new Blob([b3],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
     const a3=document.createElement('a'); a3.href=u3; a3.download=fn3; document.body.appendChild(a3); a3.click(); a3.remove(); setTimeout(()=>URL.revokeObjectURL(u3),5000);
-    const c={S:0,A:0,B:0,C:0}; let cg=0; g.rows.forEach(x=>{c[x.grade]++; if(x.verdict==='칼라 결손')cg++;});
-    $('kpi').innerHTML=[['리스트 상품',g.total]].concat(selMy.length>1?[]:[['보유',g.heldCnt]]).concat([['미보유'+(selMy.length>1?' (매장 합)':''),g.rows.length]]).concat(r.peers.length?[['상대매장 보유',g.rows.filter(x=>+x.peerSum>0).length]]:[]).concat([,['🔴 S 즉시요청',c.S],['🟠 A 창고있음',c.A],['🟡 B 타매장판매',c.B],['⚪ C 재고없음',c.C]])
+    let cg=0; g.rows.forEach(x=>{if(x.verdict==='칼라 결손')cg++;});
+    $('kpi').innerHTML=[['리스트 상품',g.total]].concat(selMy.length>1?[]:[['보유',g.heldCnt]]).concat([['미보유'+(selMy.length>1?' (매장 합)':''),g.rows.length]])
+      .concat(r.has.wh?[['창고 있음',g.rows.filter(x=>+x.wh>0).length]]:[]).concat(r.has.sales?[['타매장 판매 있음',g.rows.filter(x=>+x.other>0).length]]:[]).concat(r.peerOn?[['상대매장 재고 있음',g.rows.filter(x=>+x.peerSum>0).length]]:[])
       .map(([a,b])=>`<div><small>${a}</small><b>${b.toLocaleString()}</b></div>`).join('');
     const per={}; g.rows.forEach(x=>per[x.store]=(per[x.store]||0)+1);
     const w=[`미보유 매장별: `+selMy.map(s=>`${s} ${(per[s]||0).toLocaleString()}건`).join(' · ')+` · 칼라 결손(같은 스타일 다른 컬러만 보유) ${cg.toLocaleString()}건 포함`];
     const pn=peerNote(r); if(pn) w.push(pn);
-    if(!r.has.wh) w.push('창고재고 파일이 없어 S·A 등급이 나오지 않습니다.');
-    if(!r.has.sales) w.push('판매현황 파일이 없어 S·B 등급이 나오지 않습니다.');
     if(!g.heldCnt&&selMy.length===1) w.push('보유 상품이 0건입니다. 이 카테고리를 취급하지 않는 매장이거나, 내 매장 선택·재고 파일이 맞는지 확인해 주세요.');
     $('warns').innerHTML=w.map(x=>'<li>ⓘ '+esc(x)+'</li>').join('');
     $('res').hidden=false; $('st').textContent='✅ 다운로드 완료: '+fn3;
